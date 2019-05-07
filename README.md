@@ -35,7 +35,7 @@ truffle migrate --reset
 El contrato utilizado es el de Robert con unas pequeñas modificaciones, se puede ver
 en ```contract/contracts/Stamper.sol```.
 
-## Correr API
+### Correr API
 La primera vez hay que ejecutar lo siguiente dentro del directorio ```api```
 ```shell
 npm install
@@ -80,7 +80,7 @@ La api tiene dos endpoints:
   ```stamped``` es true si tiene algun stamp el hash ese. En ```stamps``` viene la
   lista de stampers de ese objecto junto al nro de bloque en el que lo hizo.
 
-## UI
+### UI
 La primera vez hay que ejecutar lo siguiente dentro del directorio ```ui```
 ```shell
 npm install
