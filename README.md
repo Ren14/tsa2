@@ -95,4 +95,4 @@ npm run serve
 Cosas que habría que discutir:
  * algoritmo de hasheo de archivos (ahora es sha256 se prefiere keccak o sha3?)
    * https://emn178.github.io/online-tools/keccak_256_checksum.html
- * vale la pena ponerse a ahorrar gas?
+ * vale la pena ponerse a ahorrar gas? Ahora cada put sale ~150000 GAS
