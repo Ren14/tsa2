@@ -47,6 +47,7 @@ import axios from "axios"
 
 export default {
     name: 'DropFile',
+    props: ['apiurl'],
     data: function() {
         return {
             loading: false,
@@ -68,9 +69,8 @@ export default {
         verify() {
             var self = this;
 
-            let baseUrl = process.env.VUE_APP_API_URL
             let hash = self.uploadedFiles[0].hash
-            let verifyUrl = `${baseUrl}/verify/${hash}`
+            let verifyUrl = `${this.apiurl}/verify/${hash}`
             self.loading = true
             axios.get(verifyUrl).then((res) => {
                 console.log(res.data)
@@ -87,8 +87,7 @@ export default {
         stamp() {
             var self = this;
 
-            let baseUrl = process.env.VUE_APP_API_URL
-            let stampUrl = `${baseUrl}/stamp`
+            let stampUrl = `${this.apiurl}/stamp`
             self.loading = true
             axios.post(stampUrl, {
                 hashes: [self.uploadedFiles[0].hash]

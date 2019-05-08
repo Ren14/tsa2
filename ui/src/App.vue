@@ -2,6 +2,7 @@
   <div id="app">
     <div class="drop-file-wrapper">
       <DropFile
+        :apiurl="apiurl"
         v-if="state == 'visible-drop'"
         v-on:stamp="onStamp()" 
         v-on:failed-stamp="onFailedStamp()" 
@@ -37,6 +38,7 @@
  
  export default {
    name: 'app',
+   props: ['apiurl'],
    data: function() {
      return {
        state: 'visible-drop',
