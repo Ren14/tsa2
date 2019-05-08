@@ -1,0 +1,2 @@
+export TX_HASH=$(curl -s -u pepo:pepo http://localhost:3000/stamp | jq -r .hash) && echo $TX_HASH
+curl -s -u pepo:pepo http://localhost:3000/status/$TX_HASH | jq
