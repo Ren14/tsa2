@@ -16,6 +16,7 @@ const accountIsSet = process.env.GETH_ACCOUNT || false
 // si no se seteó una account se usa esta const como el indice de accounts de ganache
 const account = (accountIsSet) ? process.env.GETH_ACCOUNT : 1
 
+
 var web3 = web3
 if (typeof web3 !== 'undefined') {
     console.log('Cargando web3 provider desde el entorno')
@@ -46,6 +47,28 @@ async function setupWeb3() {
 }
 
 /***************************************************/
+// Carga de contrato
+/***************************************************/
+let contractAbi;
+let contractAddress;
+
+if (process.env.CONTRACT_ABI_PATH) {
+    contractAbi = require(process.env.CONTRACT_ABI_PATH)
+    if (!process.env.CONTRACT_ADDRESS) {
+        console.error('Si se especifica el path de un abi, debe proveerse un address con la env CONTRACT_ADDRESS')
+        process.exit(1)
+    }
+    contractAddress = process.env.CONTRACT_ADDRESS
+} else {
+    let path = '../../contract/build/contracts/Stamper.json'
+    console.log(`Intentando cargar ${path}`)
+    let data = require(path)
+    contractAbi = data.abi
+    web3.eth.net.getId().then(function(netId) {
+        contractAddress = data.networks[netId].address
+    })
+}
+/***************************************************/
 // Setup API
 /***************************************************/
 const app = express()
@@ -72,8 +95,7 @@ if (process.env.API_USER && process.env.API_PASS) {
 // API Endpoints
 /***************************************************/
 app.post('/stamp', async (req, res) => {
-    let netId = await web3.eth.net.getId()
-    let ss = new Stamper(web3, netId)
+    let ss = new Stamper(web3, contractAbi, contractAddress)
     ss.setSender(web3.eth.defaultAccount)
 
     if (!("hashes" in req.body)) {
@@ -109,8 +131,7 @@ app.post('/stamp', async (req, res) => {
 })
 
 app.get('/verify/:hash', async (req, res) => {
-    let netId = await web3.eth.net.getId()
-    let ss = new Stamper(web3, netId)
+    let ss = new Stamper(web3, contractAbi, contractAddress)
     ss.setSender(web3.eth.defaultAccount)
 
     var value = req.params.hash

@@ -1,10 +1,9 @@
-const stamperInterface = require('../../contract/build/contracts/Stamper.json')
+//const stamperInterface = require('../../contract/build/contracts/Stamper.json')
 
 class Stamper {
-    constructor(web3, netId) {
+    constructor(web3, contractAbi, contractAddress) {
         this.web3 = web3
-        let address = stamperInterface.networks[netId].address
-        this.contract = new web3.eth.Contract(stamperInterface.abi, address)
+        this.contract = new web3.eth.Contract(contractAbi, contractAddress)
     }
 
     setSender(fromAddress) {
@@ -32,7 +31,8 @@ class Stamper {
         })
 
         txPromise.then((receipt) => {
-            console.log(`${hash}: stamped (bloque: ${receipt.blockNumber})`)
+            console.log(`> hashes stampeados en bloque: ${receipt.blockNumber}`)
+            console.log(hashesToStamp)
         }).catch((error) => {
             console.error(error)
         })
@@ -51,6 +51,7 @@ class Stamper {
         try {
             let count = await this.contract.methods.getObjectCount(hash).call()
             if (count == 0) {
+                console.log(`fallo verificación ${hash}`)
                 return { stamped: false, stamps: [] }
             }
 
@@ -62,6 +63,7 @@ class Stamper {
                 stamps.push({ stamper: stamp[1], block: stamp[2].toString() })
             }
 
+            console.log(`exito verificación ${hash}`)
             return { stamped: true, stamps: stamps }
         } catch (e) {
             console.error(e)
