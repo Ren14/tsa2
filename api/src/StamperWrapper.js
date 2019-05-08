@@ -3,7 +3,6 @@ const stamperInterface = require('../../contract/build/contracts/Stamper.json')
 class Stamper {
     constructor(web3, netId) {
         this.web3 = web3
-        console.log(stamperInterface)
         let address = stamperInterface.networks[netId].address
         this.contract = new web3.eth.Contract(stamperInterface.abi, address)
     }

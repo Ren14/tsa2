@@ -68,6 +68,9 @@ if (process.env.API_USER && process.env.API_PASS) {
     console.log("El servidor es PUBLICO")
 }
 
+/***************************************************/
+// API Endpoints
+/***************************************************/
 app.post('/stamp', async (req, res) => {
     let netId = await web3.eth.net.getId()
     let ss = new Stamper(web3, netId)
