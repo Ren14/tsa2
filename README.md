@@ -14,7 +14,8 @@ Cosas que habría que discutir:
 ## Dependencias
 Todo fue probado con node 10.8 y npm 6.2.
 
-También hay que tener instalado truffle de manera global:
+Si se desea hacer modificaciones en el contrato hay que tener instalado truffle 
+de manera global:
 ```shell
 npm install -g truffle
 ```
