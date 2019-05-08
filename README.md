@@ -147,8 +147,8 @@ Se pueden definir las siguientes variables de entorno para parametrizar el servi
  ```
 
 ### Deploy de la UI
-Al buildear se crea el archivo ```ui/dist/index.html```. Al accederlo vemos sólo
-el componente de Stampeo. El html se ve así:
+Al buildear se crea el archivo ```ui/dist/index.html``` y todo el resto de los recursos
+necesarios. Al acceder al index.html sólo se ve el componente de Stampeo. El html se ve así:
 ```html
 <!DOCTYPE html>
 <html lang=en>
