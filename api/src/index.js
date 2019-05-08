@@ -14,7 +14,7 @@ import Stamper from './StamperWrapper'
 const providerHost = process.env.GETH_HOST || 'http://localhost:7545'
 const accountIsSet = process.env.GETH_ACCOUNT || false
 // si no se seteó una account se usa esta const como el indice de accounts de ganache
-const account = (accountIsSet) ? process.env.GETH_ACCOUNT : 1
+const account = (accountIsSet) ? process.env.GETH_ACCOUNT : 0
 
 
 var web3 = web3

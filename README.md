@@ -5,6 +5,12 @@ Descargar el proyecto:
 git clone https://gitlab.bfa.ar/blockchain/tsa2.git
 ```
 
+## Discusión
+Cosas que habría que discutir:
+ * algoritmo de hasheo de archivos (ahora es sha256 se prefiere keccak o sha3?)
+   * https://emn178.github.io/online-tools/keccak_256_checksum.html
+ * vale la pena ponerse a ahorrar gas? Ahora cada put sale ~150000 GAS
+
 ## Dependencias
 Todo fue probado con node 10.8 y npm 6.2.
 
@@ -90,9 +96,81 @@ La aplicación está escrita con Vue.js. Para correr el servicio hay que ejecuta
 ```shell
 npm run serve
 ```
+## Instalación en producción
+Para correr en producción se deben compilar la UI y la API. Una vez hecho eso
+ya se está listo para correr la API y tirar los assets de UI donde se desee.
 
-## Discusión
-Cosas que habría que discutir:
- * algoritmo de hasheo de archivos (ahora es sha256 se prefiere keccak o sha3?)
-   * https://emn178.github.io/online-tools/keccak_256_checksum.html
- * vale la pena ponerse a ahorrar gas? Ahora cada put sale ~150000 GAS
+### Compilación de componentes
+Para compilar la UI y la API hay que ejecutar el comando:
+```shell
+npm run build
+```
+dentro de cada uno de los directorios.
+
+Como output se van a crear los directorios ```ui/dist``` y ```api/dist```
+
+### Deploy y configuración de la API
+Para correr la API hay que ejecutar con node el archivo ```dist/index.js```
+
+```shell
+node dist/index.js
+```
+
+Se pueden definir las siguientes variables de entorno para parametrizar el servidor:
+ * **GETH_HOST**: url del host geth a conectarse. Por defecto ***http://localhost:7545***
+ * **GETH_ACCOUNT**: account a utilizar. Por defecto se utiliza la que está la 
+ pos 0 de ```web3.eth.getAccounts()```
+ * **CONTRACT_ABI_PATH**: path al archivo que contiene el abi. Puede ser un path 
+ absoluto.
+ Si es relativo la ruta se calcula desde el dir api/dist. Por defecto se trata 
+ de cargar desde el directorio build de truffle (```contract/build/contracts/Stamper.json```)
+ * **CONTRACT_ABI_ADDRESS**: dirección del contrato. Por defecto se utiliza la 
+ que está en el archivo de build de truffle para el netId actual
+ * **USE_CORS**: permite des/habilitar el CORS a este server. Por defecto está
+ habilitado. Para deshabilitar pasar ***USE_CORS=0***
+ * **API_USER** y **API_PASS**: Si están seteadas las dos la API tendrá auth
+ basic. Sino es pública. Por defecto es pública.
+ * **PORT**: Puerto donde corre la API. Por defecto es 3000
+
+ Estos parámetros se pueden setear de dos maneras. La primera es crear el archivo
+ ```api/.env``` y ahí definir los valores deseados:
+ ```bash
+ # archivo api/.env
+ USE_CORS=0
+ PORT=8010
+ ```
+
+ La otra forma es setearlos al correr node, eg:
+ ```shell
+ PORT=8010 USE_CORS=0 node dist/index.js
+ ```
+
+### Deploy de la UI
+Al buildear se crea el archivo ```ui/dist/index.html```. Al accederlo vemos sólo
+el componente de Stampeo. El html se ve así:
+```html
+<!DOCTYPE html>
+<html lang=en>
+   <head>
+      <meta charset=utf-8>
+      <meta http-equiv=X-UA-Compatible content="IE=edge">
+      <meta name=viewport content="width=device-width,initial-scale=1">
+      <link rel=icon href=/favicon.ico>
+      <title>ui</title>
+      <link href=/css/app.47c5343e.css rel=preload as=style>
+      <link href=/js/app.fa8c25b5.js rel=preload as=script>
+      <link href=/js/chunk-vendors.bbeb7c49.js rel=preload as=script>
+      <link href=/css/app.47c5343e.css rel=stylesheet>
+   </head>
+   <body>
+      <noscript><strong>We're sorry but ui doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript>
+      <div id=app apiurl=http://localhost:3000></div>
+      <script src=/js/chunk-vendors.bbeb7c49.js></script><script src=/js/app.fa8c25b5.js></script>
+   </body>
+</html>
+ ```
+
+Para embeberlo en otro contexto hay que copiar los ```<link />``` y el ```<div id=app>``` y ```<script />``` 
+del body. 
+
+**Es importante notar que la url de la api se configura en el atributo ***apiurl*** del div con id ```app```. Esto tiene que apuntar a la URL donde se eligió ejecutar la API.**
