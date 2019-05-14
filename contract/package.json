@@ -1,0 +1,11 @@
+{
+  "name": "tsa2-contract",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "truffle-hdwallet-provider": "^1.0.9"
+  }
+}

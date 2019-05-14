@@ -5,17 +5,15 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import basicAuth from 'express-basic-auth'
-//import SimpleStamper from './simpleStamperWrapper'
 import Stamper from './StamperWrapper'
+import fs from 'fs'
 
 /***************************************************/
 // Conexión al provider
 /***************************************************/
 const providerHost = process.env.GETH_HOST || 'http://localhost:7545'
-const accountIsSet = process.env.GETH_ACCOUNT || false
-// si no se seteó una account se usa esta const como el indice de accounts de ganache
-const account = (accountIsSet) ? process.env.GETH_ACCOUNT : 0
-
+// const providerHost = process.env.GETH_HOST || 'http://localhost:8545'
+const accountIsSet = process.env.GETH_ACCOUNT_JSON || false
 
 var web3 = web3
 if (typeof web3 !== 'undefined') {
@@ -28,16 +26,48 @@ if (typeof web3 !== 'undefined') {
     setupWeb3()
 }
 
+let contractAbi;
+let contractAddress;
+let walletAccount;
+
 async function setupWeb3() {
     try {
         let netIsListening = await web3.eth.net.isListening()
         let netId = await web3.eth.net.getId()
-        web3.eth.defaultAccount = (accountIsSet) ? account : (await web3.eth.getAccounts())[account]
+        if (accountIsSet) {
+            let rawKeyJsonV3 = fs.readFileSync(process.env.GETH_ACCOUNT_JSON)
+            let keyJsonV3 = JSON.parse(rawKeyJsonV3)
+            let key = web3.eth.accounts.decrypt(keyJsonV3, process.env.GETH_ACCOUNT_PASSWORD)
+            walletAccount = web3.eth.accounts.wallet.add(key)
+            web3.eth.defaultAccount = (await web3.eth.getAccounts())[0]
+        } else {
+            // se trata de utilizar una que haya abierta
+            web3.eth.defaultAccount = (await web3.eth.getAccounts())[0]
+        }
+
+        /***************************************************/
+        // Carga de contrato
+        /***************************************************/
+        if (process.env.CONTRACT_ABI_PATH) {
+            contractAbi = require(process.env.CONTRACT_ABI_PATH)
+            if (!process.env.CONTRACT_ADDRESS) {
+                console.error('Si se especifica el path de un abi, debe proveerse un address con la env CONTRACT_ADDRESS')
+                process.exit(1)
+            }
+            contractAddress = process.env.CONTRACT_ADDRESS
+        } else {
+            let path = '../../contract/build/contracts/Stamper.json'
+            console.log(`Intentando cargar ${path} netId: ${netId}`)
+            let data = require(path)
+            contractAbi = data.abi
+            contractAddress = data.networks[netId].address
+        }
 
         console.log(`Conectado exitosamente: 
  > host: ${providerHost}
  > netId: ${netId}
  > account: ${web3.eth.defaultAccount}
+ > address: ${contractAddress}
     `)
     } catch (e) {
         console.error('Error de conexión')
@@ -47,29 +77,7 @@ async function setupWeb3() {
 }
 
 /***************************************************/
-// Carga de contrato
-/***************************************************/
-let contractAbi;
-let contractAddress;
-
-if (process.env.CONTRACT_ABI_PATH) {
-    contractAbi = require(process.env.CONTRACT_ABI_PATH)
-    if (!process.env.CONTRACT_ADDRESS) {
-        console.error('Si se especifica el path de un abi, debe proveerse un address con la env CONTRACT_ADDRESS')
-        process.exit(1)
-    }
-    contractAddress = process.env.CONTRACT_ADDRESS
-} else {
-    let path = '../../contract/build/contracts/Stamper.json'
-    console.log(`Intentando cargar ${path}`)
-    let data = require(path)
-    contractAbi = data.abi
-    web3.eth.net.getId().then(function(netId) {
-        contractAddress = data.networks[netId].address
-    })
-}
-/***************************************************/
-// Setup API
+// Setup CORS y Auth
 /***************************************************/
 const app = express()
 
@@ -96,7 +104,6 @@ if (process.env.API_USER && process.env.API_PASS) {
 /***************************************************/
 app.post('/stamp', async (req, res) => {
     let ss = new Stamper(web3, contractAbi, contractAddress)
-    ss.setSender(web3.eth.defaultAccount)
 
     if (!("hashes" in req.body)) {
         res.status(422)
@@ -120,7 +127,7 @@ app.post('/stamp', async (req, res) => {
     }
 
     try {
-        let txHash = await ss.stamp(hashes)
+        let txHash = await ss.stamp(hashes, walletAccount)
         //let fullUrl = req.protocol + '://' + req.get('host')
         res.status(200).send('success')
     } catch (e) {
@@ -132,7 +139,6 @@ app.post('/stamp', async (req, res) => {
 
 app.get('/verify/:hash', async (req, res) => {
     let ss = new Stamper(web3, contractAbi, contractAddress)
-    ss.setSender(web3.eth.defaultAccount)
 
     var value = req.params.hash
     if (! value.startsWith('0x')) {

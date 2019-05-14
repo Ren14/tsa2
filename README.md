@@ -28,6 +28,11 @@ El proyecto está compuesto por tres componentes, los contratos, una api rest
 y una interfaz gráfica.
 
 ### Deployar los contratos
+La primera vez hay que ejecutar lo siguiente dentro del directorio ```contract```
+```shell
+npm install
+```
+
 Para manejar los contratos se utilizó truffle, para hacer el deploy de los
 contratos hay que correr dentro del directorio ```contract``` el siguiente comando
 ```shell
@@ -119,13 +124,14 @@ node dist/index.js
 
 Se pueden definir las siguientes variables de entorno para parametrizar el servidor:
  * **GETH_HOST**: url del host geth a conectarse. Por defecto ***http://localhost:7545***
- * **GETH_ACCOUNT**: account a utilizar. Por defecto se utiliza la que está la 
- pos 0 de ```web3.eth.getAccounts()```
+ * **GETH_ACCOUNT_JSON**: Path a la key encriptada (V3) donde se encuentra la account
+ a utilizar. Por defecto se utiliza la que está la pos 0 de ```web3.eth.getAccounts()```
+ * **GETH_ACCOUNT_PASSWORD**: Clave plana de la key provista en ***GETH_ACCOUNT_JSON***
  * **CONTRACT_ABI_PATH**: path al archivo que contiene el abi. Puede ser un path 
  absoluto.
  Si es relativo la ruta se calcula desde el dir api/dist. Por defecto se trata 
  de cargar desde el directorio build de truffle (```contract/build/contracts/Stamper.json```)
- * **CONTRACT_ABI_ADDRESS**: dirección del contrato. Por defecto se utiliza la 
+ * **CONTRACT_ADDRESS**: dirección del contrato. Por defecto se utiliza la 
  que está en el archivo de build de truffle para el netId actual
  * **USE_CORS**: permite des/habilitar el CORS a este server. Por defecto está
  habilitado. Para deshabilitar pasar ***USE_CORS=0***
@@ -142,9 +148,19 @@ Se pueden definir las siguientes variables de entorno para parametrizar el servi
  ```
 
  La otra forma es setearlos al correr node, eg:
- ```shell
+ ```s
  PORT=8010 USE_CORS=0 node dist/index.js
  ```
+
+ Ejemplo que levanta corriendo contra BFA:
+ ```s
+GETH_ACCOUNT_JSON=$(pwd)/../../847e7d6ea18a417496518dc90b547438bf1b3d05.json \
+GETH_ACCOUNT_PASSWORD=mipasswordseguro \
+GETH_HOST=http://localhost:8545 \
+CONTRACT_ABI_PATH=$(pwd)/abi.json \
+CONTRACT_ADDRESS=0x7e56220069CAaF8367EA42817EA9210296AeC7c6 \
+node dist/index.js
+```
 
 ### Deploy de la UI
 Al buildear se crea el archivo ```ui/dist/index.html``` y todo el resto de los recursos
