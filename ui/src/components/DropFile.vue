@@ -1,42 +1,32 @@
 <template>
         <!-- @dragover.prevent @dragover="handleDragStart()" -->
-    <div class="drop-file" @drop.prevent @drop="handleDrop($event)">
+    <div class="dropArea" @drop.prevent @drop="handleDrop($event)" aria-live="polite">
     
-        <div style="visibility:hidden; opacity:0" id="dropzone">
-            <div class="center-v">Arrastrá el archivo aquí</div>
+        <div id="dropzone" class="overlay pulse" style="visibility: hidden;"></div>
+        <div class="loading overlay" v-if="loading">
+            <img class="center-v" src="/static/images/loader.svg" width="100px" height="100px" alt="Cargando">
         </div>
-        <div class="loading" v-if="loading">
-            <div class="center-v">Loading . . .</div>
-        </div>
-        <div class="col-md-4" id="file-panel">
-            <div class="panel panel-success">
-                <div class="panel-body">
-                    <div v-if="uploadedFiles.length == 0">
-                        <p><strong>Arrastrá un archivo aquí</strong></p>
-                        <p>o</p>
-                        <p>
-                            <label class="text-reader">
-                                Elegir archivo 
-                                <input type="file" @change="handleInput">
-                            </label>
-                        </p>
-                    </div>
-                    <div v-if="uploadedFiles.length > 0" class="file-info">
-                        <p> 
-                            Nombre del archivo: <b> {{ uploadedFiles[0].fileName }}</b> 
-                        </p>
-                        <p class='hash'> 
-                            Hash: <b> {{ uploadedFiles[0].hash }}</b> 
-                        </p>
-                    </div>
-                    <!-- <li v-for="(file,index) in uploadedFiles" v-bind:key="index">{{file.fileName}}: {{file.hash}}</li> -->
-                </div>
+        <div>
+            <div v-if="uploadedFiles.length == 0">
+                <div><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></div>
+                <div class="droptxt">Arrastrá un archivo aquí<br>ó</div>
+                <div><button type="button" class="btn btn-primary btn-pill" v-on:click="uploadFile()">Seleccioná un archivo <span class="sr-only">para Sellar o Verificar</span></button></div>
+                <input type="file" id="fileUpload" @change="handleInput" hidden>
             </div>
+            <div v-if="uploadedFiles.length > 0" class="file-info">
+                <p> 
+                    Nombre del archivo: <b> {{ uploadedFiles[0].fileName }}</b> 
+                </p>
+                <p class='hash'> 
+                    Hash del archivo: <b> {{ uploadedFiles[0].hash }}</b> 
+                </p>
+            </div>
+            <!-- <li v-for="(file,index) in uploadedFiles" v-bind:key="index">{{file.fileName}}: {{file.hash}}</li> -->
         </div>
 
-        <div class="buttons">
-            <button v-if="uploadedFiles.length > 0" v-on:click="stamp()">Stamp</button>
-            <button v-if="uploadedFiles.length > 0" v-on:click="verify()">Verify</button>
+        <div>
+            <button class="btn btn-lg btn-primary btn-pill" v-if="uploadedFiles.length > 0" v-on:click="stamp()">Sellar</button>
+            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify()">Verificar</button>
         </div>
     </div>
 </template>
@@ -46,6 +36,7 @@ import * as SHA256 from "js-sha256"
 import axios from "axios"
 
 export default {
+    /* eslint-disable */ 
     name: 'DropFile',
     props: ['apiurl'],
     data: function() {
@@ -56,6 +47,9 @@ export default {
         };
     },
     methods: {
+        uploadFile() {
+            document.getElementById("fileUpload").click()
+        },
         handleInput(e) {
             var files = e.target.files
             this.uploadFiles([files[0]])
@@ -73,7 +67,7 @@ export default {
             let verifyUrl = `${this.apiurl}/verify/${hash}`
             self.loading = true
             axios.get(verifyUrl).then((res) => {
-                console.log(res.data)
+                //console.log(res.data)
                 if (res.data.stamped) {
                     self.$emit('verify', res.data.stamps)
                 } else {
@@ -81,7 +75,7 @@ export default {
                 }
             }).catch((e) => {
                 self.$emit('failed-verify')
-                console.error(e)
+                //console.error(e)
             }).finally( () => self.loading = false )
         },
         stamp() {
@@ -92,19 +86,19 @@ export default {
             axios.post(stampUrl, {
                 hashes: [self.uploadedFiles[0].hash]
             }).then((res) => {
-                console.log(res.data)
+                //console.log(res.data)
                 self.$emit('stamp')
             }).catch((e) => {
-                console.error(e)
+                //console.error(e)
                 self.$emit('failed-stamp')
             }).finally( () => self.loading = false )
         },
         uploadFiles: function(f) {
             var self = this;
-    
             this.loading = true
             function loadFile(file) {
                 let name = file.name
+                self.$emit('nombreArchivo', name)
                 let reader = new FileReader()
         
                 reader.onload = function(e) {
@@ -128,117 +122,32 @@ export default {
         }
     },
     mounted() {
+
+        var counter = 0;
+
         window.addEventListener("dragenter", function (e) {
-            e.preventDefault();
-            
+            e.preventDefault();         
+            counter++;   
             document.querySelector("#dropzone").style.visibility = "";
-            document.querySelector("#dropzone").style.opacity = 1;
         });
   
         window.addEventListener("dragleave", function (e) {
             e.preventDefault();
-
-            document.querySelector("#dropzone").style.visibility = "hidden";
-            document.querySelector("#dropzone").style.opacity = 0;
+            counter--;
+            if (counter === 0) { 
+                document.querySelector("#dropzone").style.visibility = "hidden";
+            }
         });
   
         window.addEventListener("dragover", function (e) {
             e.preventDefault();
-
             document.querySelector("#dropzone").style.visibility = "";
-            document.querySelector("#dropzone").style.opacity = 1;
         });
   
         window.addEventListener("drop", function (e) {
             e.preventDefault();
             document.querySelector("#dropzone").style.visibility = "hidden";
-            document.querySelector("#dropzone").style.opacity = 0;
-        })
+        });
     }
   }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.drop-file {
-    width: 100%;
-    height: 100%;
-}
-
-.text-reader {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-
-  /* Fancy button looking */
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 6px 10px;
-  margin: 5px;
-  cursor: pointer;
-}
-
-.text-reader input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  opacity: 0;
-}
-
-.hash {
-    word-wrap: break-word;
-}
-
-.panel-body {
-    padding: 20px
-}
-.panel-body p {
-    margin: 0
-}
-.buttons {
-    position: absolute;
-    top: 104%;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.loading {
-    position: absolute;
-    /* top: 0;
-    left: 0;  */
-    z-index: 9999999999;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    transition: visibility 175ms, opacity 175ms;
-    display: table;
-    text-shadow: 1px 1px 2px #000;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.45);
-    font: bold 42px Oswald, DejaVu Sans, Tahoma, sans-serif;
-}
-
-.center-v {
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-    transition: font-size 175ms;
-}
-div#dropzone {
-    position: absolute;
-    /* top: 0;
-    left: 0;  */
-    z-index: 9999999999;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    transition: visibility 175ms, opacity 175ms;
-    display: table;
-    text-shadow: 1px 1px 2px #000;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.45);
-    font: bold 42px Oswald, DejaVu Sans, Tahoma, sans-serif;
-}
-
-</style>
