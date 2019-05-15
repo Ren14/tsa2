@@ -1,4 +1,7 @@
-.tsa .dropArea {
+#app{
+    margin-bottom: 20px;
+}
+.tsa2 .dropArea {
     border: 1px dashed #0094D4;
     background-color: #ffffff;
     padding: 50px;
@@ -7,40 +10,52 @@
     border-radius: 5px;
     /* transition: 0.3s; */
     position: relative;
-    margin-bottom: 20px;
+}
+.tsa2 .btn-primary:active, .tsa2 .btn-primary:active:hover, .tsa2 .btn-primary:focus, .tsa2 .btn-primary:hover {
+    background-color: #fff;
+    color: #0094d4;
+    border-color: #0094d4;
 }
 
-.tsa .btn-pill {
+.tsa2 .btn-success:active, .tsa2 .btn-success:active:hover, .tsa2 .btn-success:focus, .tsa2 .btn-success:hover {
+    background-color: #fff;
+    color: #4cae4c;
+    border-color: #4cae4c;
+}
+
+.tsa2 .btn-pill {
     border-radius: 50px;
+    border-width: 2px;
+    font-weight: 400;
 }
 
 
-.tsa .hash {
+.tsa2 .hash {
     word-wrap: break-word;
 }
 
-.tsa .dropArea p {
+.tsa2 .dropArea p {
     margin-bottom: 5px;
 }
 
-.tsa .dropArea:hover {
+.tsa2 .dropArea:hover {
     border-style: solid;
     background: rgba(0, 148, 212, 0.05);
 }
 
 
-.tsa .dropArea .droptxt {
+.tsa2 .dropArea .droptxt {
     font-size: 1.2em;
     margin-bottom: 10px;
 }
 
-.tsa .dropArea .glyphicon-cloud-upload {
+.tsa2 .dropArea .glyphicon-cloud-upload {
     font-size: 8em;
     margin-bottom: 40px;
     color: #ccc;
 }
 
-.tsa .overlay {
+.tsa2 .overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -51,7 +66,7 @@
     background: rgba(0, 148, 212, 0.10);
     
 }
- .tsa .pulse{
+ .tsa2 .pulse{
     -webkit-animation: pulse 1s infinite ease-in-out;
     -o-animation: pulse 1s infinite ease-in-out;
     -ms-animation: pulse 1s infinite ease-in-out; 
@@ -59,7 +74,7 @@
     animation: pulse 1s infinite ease-in-out;
  }
 
-.tsa .loading {
+.tsa2 .loading {
     background-color: rgba(0, 148, 212, 0.75);
     text-align: center;
     -webkit-border-radius: 5px;
@@ -78,31 +93,31 @@
     }
 }
 @media screen and (max-width: 768px) {
-    .tsa .dropArea .glyphicon-cloud-upload {
+    .tsa2 .dropArea .glyphicon-cloud-upload {
         font-size: 4em;
         margin-bottom: 20px;
     }
 
-    .tsa .dropArea {
+    .tsa2 .dropArea {
         padding: 20px;
     }
 }
 
-.tsa [hidden]{
+.tsa2 [hidden]{
     display: none !important;
 }
 
-.tsa .btn-lg {
+.tsa2 .btn-lg {
     min-width: 150px;
     margin: 0 5px;
     margin-top: 20px;
 }
-.tsa .alert   {
+.tsa2 .alert   {
     margin-top: 15px;
     text-align: left;
 }
 
-.tsa .alert p{
+.tsa2 .alert p{
     margin-bottom: 0;
 }
 .drop-file {
@@ -111,23 +126,23 @@
 }
 
 
-.tsa .center-v {
+.tsa2 .center-v {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
 }
 
 @media screen and (max-width: 992px) {
-    .tsa h3 {
+    .tsa2 h3 {
         margin-top: 30px;
     }
 
-    .tsa .nav-tabs {
+    .tsa2 .nav-tabs {
         font-size: 1.3em;
     }
 }
 @media screen and (max-width: 1200px) {
-    .tsa .dropArea .droptxt {
+    .tsa2 .dropArea .droptxt {
         font-size: 1em;
         margin-bottom: 15px;
     }
