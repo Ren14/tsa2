@@ -1,9 +1,8 @@
 # TSA2
 
-Descargar el proyecto:
-```shell
-git clone https://gitlab.bfa.ar/blockchain/tsa2.git
-```
+Actualmente el contrato se encuentra deployado en BFA:
+ * dirección: **0x7e56220069CAaF8367EA42817EA9210296AeC7c6**
+ * abi: https://gitlab.bfa.ar/blockchain/tsa2/blob/develop/api/abi.json
 
 ## Discusión
 Cosas que habría que discutir:
