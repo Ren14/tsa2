@@ -15,7 +15,7 @@ Todo fue probado con node 10.8 y npm 6.2.
 
 Si se desea hacer modificaciones en el contrato hay que tener instalado truffle 
 de manera global:
-```shell
+```bash
 npm install -g truffle
 ```
 
@@ -28,18 +28,18 @@ y una interfaz gráfica.
 
 ### Deployar los contratos
 La primera vez hay que ejecutar lo siguiente dentro del directorio ```contract```
-```shell
+```bash
 npm install
 ```
 
 Para manejar los contratos se utilizó truffle, para hacer el deploy de los
 contratos hay que correr dentro del directorio ```contract``` el siguiente comando
-```shell
+```bash
 truffle migrate
 ```
 
 Si se hacen modificaciones sobre el contrato se debe ejecutar lo siguiente:
-```shell
+```bash
 truffle migrate --reset
 ```
 
@@ -48,17 +48,17 @@ en ```contract/contracts/Stamper.sol```.
 
 ### Correr API
 La primera vez hay que ejecutar lo siguiente dentro del directorio ```api```
-```shell
+```bash
 npm install
 ```
 
 Para que la API quede corriendo hay que ejecutar:
-```shell
+```bash
 npm run serve
 ```
 
 Si todo fue bien, se debería ver algo así en la consola:
-```shell
+```bash
 ➜  api git:(master) ✗ npm run serve         
 
 > api@1.0.0 serve /home/ablanco/proyectos/bfa/tsa/api
@@ -93,12 +93,12 @@ La api tiene dos endpoints:
 
 ### UI
 La primera vez hay que ejecutar lo siguiente dentro del directorio ```ui```
-```shell
+```bash
 npm install
 ```
 
 La aplicación está escrita con Vue.js. Para correr el servicio hay que ejecutar:
-```shell
+```bash
 npm run serve
 ```
 ## Instalación en producción
@@ -107,7 +107,7 @@ ya se está listo para correr la API y tirar los assets de UI donde se desee.
 
 ### Compilación de componentes
 Para compilar la UI y la API hay que ejecutar el comando:
-```shell
+```bash
 npm run build
 ```
 dentro de cada uno de los directorios.
@@ -117,7 +117,7 @@ Como output se van a crear los directorios ```ui/dist``` y ```api/dist```
 ### Deploy y configuración de la API
 Para correr la API hay que ejecutar con node el archivo ```dist/index.js```
 
-```shell
+```bash
 node dist/index.js
 ```
 
@@ -147,12 +147,12 @@ Se pueden definir las siguientes variables de entorno para parametrizar el servi
  ```
 
  La otra forma es setearlos al correr node, eg:
- ```s
+ ```bash
  PORT=8010 USE_CORS=0 node dist/index.js
  ```
 
  Ejemplo que levanta corriendo contra BFA:
- ```s
+ ```bash
 GETH_ACCOUNT_JSON=$(pwd)/../../847e7d6ea18a417496518dc90b547438bf1b3d05.json \
 GETH_ACCOUNT_PASSWORD=mipasswordseguro \
 GETH_HOST=http://localhost:8545 \
