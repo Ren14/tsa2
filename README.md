@@ -11,7 +11,7 @@ Cosas que habría que discutir:
  * vale la pena ponerse a ahorrar gas? Ahora cada put sale ~150000 GAS
 
 ## Dependencias
-Todo fue probado con node 10.8 y npm 6.2.
+**Todo fue probado con node 10.8 y npm 6.2.**
 
 Si se desea hacer modificaciones en el contrato hay que tener instalado truffle 
 de manera global:
