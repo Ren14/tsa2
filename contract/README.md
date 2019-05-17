@@ -6,7 +6,7 @@ la imposibilidad de unlockear la account en geth directamente por un cambio reci
 Para elegir la account que se quiere utilizar hay que pasar la pkey de la account en la variable
 de entorno ```GETH_ACCOUNT_PKEY```.
 
-La invocación se hace así *esto deployea a bfa*
+La invocación se hace así **esto deployea a bfa**
 ```bash
 GETH_ACCOUNT_PKEY=840e5ddddda6037390329b2d0b65f422f2555555555b6de292cc574fff212345 truffle migrate --network bfa
 ```
