@@ -42,7 +42,7 @@ module.exports = {
       port: 8545,            // Standard Ethereum port (default: none)
       provider: () => new HDWalletProvider(process.env.GETH_ACCOUNT_PKEY, "http://127.0.0.1:8545"),
       network_id: "47525974938",       // BFA produccion
-    }
+    },
 
     bfatest2: {
       host: "127.0.0.1",     // Localhost (default: none)
