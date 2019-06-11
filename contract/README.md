@@ -19,7 +19,7 @@ cd /tmp/keythereum
 npm install keythereum
 ```
 
-Ubicar la dirección de la cuenta en el archivo que está en ```/home/bfa/bfa/network/node/keystore```` (o ```/home/bfa/bfa/test2network/node/keystore``` si es la red de testing).
+Ubicar la dirección de la cuenta en el archivo que está en ```/home/bfa/bfa/network/node/keystore``` (o ```/home/bfa/bfa/test2network/node/keystore``` si es la red de testing).
 
 Después, invocar a la consola node.js (con el comando ```nodejs```) y ejecutar los siguientes pasos (cambiando _miclave_ por la clave de la cuenta -o el string vacío si la cuenta no tiene clave- y la dirección obtenida arriba en lugar de _MiDireccion_):
 
