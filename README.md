@@ -4,6 +4,10 @@ Actualmente el contrato se encuentra deployado en BFA:
  * dirección: **0x7e56220069CAaF8367EA42817EA9210296AeC7c6**
  * abi: https://gitlab.bfa.ar/blockchain/tsa2/blob/develop/api/abi.json
 
+También está deployado en la testnet2:
+ * dirección: **0xFc0f01A88bD08b988173A2354952087C9492d947**
+ * abi: https://gitlab.bfa.ar/blockchain/tsa2/blob/develop/api/abi.json
+
 ## Discusión
 Cosas que habría que discutir:
  * algoritmo de hasheo de archivos (ahora es sha256 se prefiere keccak o sha3?)
