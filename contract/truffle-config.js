@@ -41,8 +41,16 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 8545,            // Standard Ethereum port (default: none)
       provider: () => new HDWalletProvider(process.env.GETH_ACCOUNT_PKEY, "http://127.0.0.1:8545"),
-      network_id: "47525974938",       // Any network (default: none)
+      network_id: "47525974938",       // BFA produccion
     }
+
+    bfatest2: {
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 8545,            // Standard Ethereum port (default: none)
+      provider: () => new HDWalletProvider(process.env.GETH_ACCOUNT_PKEY, "http://127.0.0.1:8545"),
+      network_id: "55555000000",       // BFA produccion
+    }
+
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
