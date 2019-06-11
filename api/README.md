@@ -1,5 +1,7 @@
 # Ejemplo en BFA
 
+(en lugar de __UTC*__ poner el nombre completo del archivo de la cuenta)
+
 ```bash
 cd api
 GETH_ACCOUNT_JSON="/home/bfa/bfa/network/node/keystore/UTC*" \
@@ -11,6 +13,8 @@ npm run serve
 ```
 
 # Ejemplo en test network
+
+(en lugar de __UTC*__ poner el nombre completo del archivo de la cuenta)
 
 ```bash
 cd api
