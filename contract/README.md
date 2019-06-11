@@ -19,12 +19,14 @@ cd /tmp/keythereum
 npm install keythereum
 ```
 
-Después, invocar a la consola (con ```attach.sh```) y ejecutar los siguientes pasos (cambiando _miclave_ por la clave de la cuenta -o el string vacío si la cuenta no tiene clave):
+Ubicar la dirección de la cuenta en el archivo que está en ```/home/bfa/bfa/network/node/keystore```` (o ```/home/bfa/bfa/test2network/node/keystore``` si es la red de testing).
 
-```bash
+Después, invocar a la consola node.js (con el comando ```nodejs```) y ejecutar los siguientes pasos (cambiando _miclave_ por la clave de la cuenta -o el string vacío si la cuenta no tiene clave- y la dirección obtenida arriba en lugar de _MiDireccion_):
+
+```javascript
 var keythereum = require("keythereum");
 var datadir = "/home/bfa/bfa/network/node"; // si es la red de testing usar "/home/bfa/bfa/test2network/node"
-var address= "0xc8096d713000002c77e4eb62f0000ead5f105a7e";
+var address= "0xMiDireccion";
 const password = "miclave";
 
 var keyObject = keythereum.importFromFile(address, datadir);
