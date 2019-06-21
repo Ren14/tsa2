@@ -1,0 +1,187 @@
+[
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor",
+      "signature": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "object",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "name": "blockNo",
+          "type": "uint256"
+        }
+      ],
+      "name": "Stamped",
+      "type": "event",
+      "signature": "0x3a0b5d7066b49e6f19e8199e84c7a296092240386482cc1b23a7c4e3c98a79d5"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "objectList",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "put",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function",
+      "signature": "0x3a00faae"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "pos",
+          "type": "uint256"
+        }
+      ],
+      "name": "getStamplistPos",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0x9d192428"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "object",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getObjectCount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0xc2433cd3"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "object",
+          "type": "bytes32"
+        },
+        {
+          "name": "pos",
+          "type": "uint256"
+        }
+      ],
+      "name": "getObjectPos",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0x789bbb41"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "object",
+          "type": "bytes32"
+        },
+        {
+          "name": "stamper",
+          "type": "address"
+        }
+      ],
+      "name": "getBlockNo",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0xbbc48b7c"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "stamper",
+          "type": "address"
+        }
+      ],
+      "name": "getStamperCount",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0xc15ed491"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "stamper",
+          "type": "address"
+        },
+        {
+          "name": "pos",
+          "type": "uint256"
+        }
+      ],
+      "name": "getStamperPos",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0xa08d1a4f"
+    }
+  ]
