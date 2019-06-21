@@ -1,6 +1,28 @@
 <template>
-  <div id="app">
-    <div class="drop-file-wrapper">
+  <div id="app">    
+    <div>
+        <div v-if="state == 'stamped'" class="dropAreasuccess-stamp alert alert-success" role="alert">
+          <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> El archivo <b>{{archivo}}</b> fue sellado con éxito en el bloque 666 el {{ stamp.unixtimestamp }}</p>
+        </div>
+        <div v-if="state=='failed-stamp'" class="fail-stamp alert alert-danger" role="alert">
+          <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Se ha producido un error al intentar sellar el archivo <b>{{archivo}}</b>
+          </p>
+        </div>
+        <div v-if="state=='verified'" class="success-verify alert alert-success" role="alert">
+          <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> El archivo <b>{{archivo}}</b> se encuentra sellado por:</p>
+          <ul>
+              <li v-for="stamp in stamps" v-bind:key="stamp.stamper">
+                  <b>{{ stamp.stamper }}</b> en el bloque <b>{{ stamp.block }}</b> el {{ stamp.unixtimestamp }}
+              </li>
+          </ul>
+        </div>
+        <div v-if="state=='failed-verification'" class="fail-verify alert alert-danger">
+          <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> No se ha podido verificar el archivo <b>{{archivo}}</b></p>
+        </div>
+        <div v-if="state!='visible-drop'">
+          <button v-on:click="continuar()" class="btn btn-primary btn-pill btn-lg">Volver a Sellar o Verificar</button>
+        </div>
+      </div>
       <DropFile
         :apiurl="apiurl"
         v-if="state == 'visible-drop'"
@@ -8,28 +30,8 @@
         v-on:failed-stamp="onFailedStamp()" 
         v-on:verify="onVerify" 
         v-on:failed-verify="onFailedVerify()" 
+        v-on:nombreArchivo="onFilename"
       />
-      <div v-if="state == 'stamped'" class="success-stamp">
-        <p> Stampeado exitosamente :)</p>
-      </div>
-      <div v-if="state=='failed-stamp'" class="fail-stamp">
-        <p> Error al stampear :( </p>
-      </div>
-      <div v-if="state=='verified'" class="success-verify">
-        <p> Verificado exitosamente por</p>
-        <ul>
-            <li v-for="stamp in stamps" v-bind:key="stamp.stamper">
-                <b>{{ stamp.stamper }}</b> en el bloque <b>{{ stamp.block }}</b>
-            </li>
-        </ul>
-      </div>
-      <div v-if="state=='failed-verification'" class="fail-verify">
-        <p> Error al verificar :( </p>
-      </div>
-      <div v-if="state!='visible-drop'">
-        <button v-on:click="continuar()">Probar de nuevo!</button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -42,6 +44,7 @@
    data: function() {
      return {
        state: 'visible-drop',
+       archivo: '',
        stamps: []
      }
    },
@@ -61,7 +64,10 @@
      },
      onFailedStamp() {
        this.state = 'failed-stamp'
-     }
+     },
+     onFilename (value) {
+      this.archivo = value
+    }
    },
    components: {
      DropFile
@@ -69,23 +75,3 @@
  }
 
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
-.drop-file-wrapper {
-    max-width: 500px;
-    position: relative;
-    border: 4px dashed;
-    margin: 0 auto;
-    height: 200px;
-}
-
-</style>
