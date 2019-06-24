@@ -1,6 +1,6 @@
 <template>
         <!-- @dragover.prevent @dragover="handleDragStart()" -->
-    <div class="dropArea" @drop.prevent @drop="handleDrop($event)" aria-live="polite">  
+    <div class="dropArea" @drop.prevent @drop="handleDrop($event)" aria-live="polite" v-on:click.stop="checkFile()">  
         <div id="dropzone" class="overlay pulse" style="visibility: hidden;"></div>
         <div class="loading overlay" v-if="loading">
             <svg aria-label="Cargando" class="center-v" version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -25,7 +25,7 @@
             <div v-if="uploadedFiles.length == 0">
                 <div><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></div>
                 <div class="droptxt">Arrastrá un archivo aquí<br>ó</div>
-                <div><button type="button" class="btn btn-primary btn-pill" v-on:click="uploadFile()">Seleccioná un archivo <span class="sr-only">para Sellar o Verificar</span></button></div>
+                <div><button type="button" class="btn btn-primary btn-pill" v-on:click.stop="uploadFile()">Seleccioná un archivo <span class="sr-only">para Sellar o Verificar</span></button></div>
                 <input type="file" id="fileUpload" @change="handleInput" hidden>
             </div>
             <div v-if="uploadedFiles.length > 0" class="file-info">
@@ -44,7 +44,7 @@
             <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify(uploadedFiles[0].hash)">Verificar</button>
         </div>
         <div class="gobackLink font_small"  v-if="uploadedFiles.length > 0" >
-            <a href="#" v-on:click="goBack()">Seleccionar otro archivo</a>
+            <a href="#" v-on:click.stop="goBack()">Seleccionar otro archivo</a>
         </div>
     </div>
 </template>
@@ -72,6 +72,9 @@ export default {
         uploadFile() {
             document.getElementById("fileUpload").click()
         },
+        checkFile() {
+            if (this.uploadedFiles.length <= 0) this.uploadFile();
+        },
         handleInput(e) {
             var files = e.target.files
             this.uploadFiles([files[0]])
@@ -93,6 +96,8 @@ export default {
                 //console.log(res.data)
                 if (res.data.stamped) {
                     self.$emit('verify', res.data.stamps)
+                    this.$router.push('/hash/'+h)
+                    this.$route.params.pathMatch
                 } else {
                     self.$emit('failed-verify')
                 }
