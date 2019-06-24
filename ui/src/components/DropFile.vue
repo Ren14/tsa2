@@ -1,7 +1,6 @@
 <template>
         <!-- @dragover.prevent @dragover="handleDragStart()" -->
-    <div class="dropArea" @drop.prevent @drop="handleDrop($event)" aria-live="polite">
-    
+    <div class="dropArea" @drop.prevent @drop="handleDrop($event)" aria-live="polite">  
         <div id="dropzone" class="overlay pulse" style="visibility: hidden;"></div>
         <div class="loading overlay" v-if="loading">
             <svg aria-label="Cargando" class="center-v" version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -42,7 +41,10 @@
 
         <div>
             <button class="btn btn-lg btn-primary btn-pill" v-if="uploadedFiles.length > 0" v-on:click="stamp()">Sellar</button>
-            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify()">Verificar</button>
+            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify(uploadedFiles[0].hash)">Verificar</button>
+        </div>
+        <div class="gobackLink font_small"  v-if="uploadedFiles.length > 0" >
+            <a href="#" v-on:click="goBack()">Seleccionar otro archivo</a>
         </div>
     </div>
 </template>
@@ -54,7 +56,7 @@ import axios from "axios"
 export default {
     /* eslint-disable */ 
     name: 'DropFile',
-    props: ['apiurl','hash'],
+    props: ['apiurl','timer'],
     data: function() {
         return {
             loading: false,
@@ -63,8 +65,8 @@ export default {
         };
     },
     created: function () {
-        console.log('Aca ta el hash '+this.hash);
-        if(this.hash != null) this.verifyHash()
+        var h = this.$route.params.hash;
+        if(h != undefined) this.verify(h)        
     },
     methods: {
         uploadFile() {
@@ -80,11 +82,12 @@ export default {
             //this.uploadFile(files);
             this.uploadFiles([files[0]]);
         },
-        verify() {
+        goBack(){     
+            this.uploadedFiles = [];
+        },
+        verify(h) {
             var self = this;
-
-            let hash = self.uploadedFiles[0].hash
-            let verifyUrl = `${this.apiurl}/verify/${hash}`
+            let verifyUrl = `${this.apiurl}/verify/`+h
             self.loading = true
             axios.get(verifyUrl).then((res) => {
                 //console.log(res.data)
@@ -106,46 +109,18 @@ export default {
             axios.post(stampUrl, {
                 hashes: [self.uploadedFiles[0].hash]
             }).then((res) => {
-                //console.log(res.data)
-                //self.$emit('stamp');
-                this.verifyStamp();
+                self.waitToVerify();
+                //self.$emit('stamp', self.uploadedFiles[0].hash);
+                //this.verify(self.uploadedFiles[0].hash);
             }).catch((e) => {
                 //console.error(e)
                 self.$emit('failed-stamp')
-            }).finally( () => self.loading = false )
+            })
         },
-        verifyStamp() {
+        waitToVerify(){
             var self = this;
-            let hash = self.uploadedFiles[0].hash
-            let verifyUrl = `${this.apiurl}/verify/${hash}`
-            self.loading = true
-            axios.get(verifyUrl).then((res) => {
-                //console.log(res.data)
-                if (res.data.stamped) {
-                    self.$emit('stamp', res.data.stamps)
-                } else {
-                    self.$emit('failed-stamp')
-                }
-            }).catch((e) => {
-                self.$emit('failed-stamp')
-                //console.error(e)
-            }).finally( () => self.loading = false )
-        },
-        verifyHash() {
-            var self = this;
-            let verifyUrl = `${this.apiurl}/verify/${this.hash}`
-            self.loading = true
-            axios.get(verifyUrl).then((res) => {
-                //console.log(res.data)
-                if (res.data.stamped) {
-                    self.$emit('verify', res.data.stamps)
-                } else {
-                    self.$emit('failed-verify')
-                }
-            }).catch((e) => {
-                self.$emit('failed-verify')
-                //console.error(e)
-            }).finally( () => self.loading = false )
+            var t = this.timer * 1000;
+            setTimeout(function(){ self.verify(self.uploadedFiles[0].hash) }, t);
         },
         uploadFiles: function(f) {            
             var self = this;

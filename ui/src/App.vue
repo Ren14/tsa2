@@ -1,10 +1,8 @@
 <template>
-  <div id="app">    
+  <div id="app">       
     <div>
         <div v-if="state == 'stamped'" class="dropAreasuccess-stamp alert alert-success" role="alert">
-          <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> El archivo <b>{{archivo}}</b> fue sellado con éxito en el bloque 
-          <span v-for="stamp in stamps" v-bind:key="stamp.stamper"><b>{{ stamp.block }}</b> el {{ convertTime(stamp.blocktimestamp) }}</span>
-          </p>
+          <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> El archivo <b>{{archivo}}</b> fue enviado con éxito para ser sellado.</p>
         </div>
         <div v-if="state=='failed-stamp'" class="fail-stamp alert alert-danger" role="alert">
           <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Se ha producido un error al intentar sellar el archivo <b>{{archivo}}</b>
@@ -27,7 +25,7 @@
       </div>
       <DropFile
         :apiurl="apiurl"
-        :hash="hash"
+        :timer="timer"
         v-if="state == 'visible-drop'"
         v-on:stamp="onStamp" 
         v-on:failed-stamp="onFailedStamp()" 
@@ -43,31 +41,35 @@
  
  export default {
    name: 'app',
-   props: ['apiurl','hash'],
-   
+   props: ['apiurl','timer'],
+   computed: {
+    hash () {
+      return this.$route.params.hash
+    }
+   },   
    data: function() {
      return {
-       state: 'visible-drop',
+       state: 'visible-drop', 
        archivo: '',
        stamps: []
      }
    },
    methods: {     
      continuar() {
-      // history.pushState('', '', '/');
-      window.location.search = ''
+      this.$router.push('/')
+      this.$route.params.pathMatch
       this.state = 'visible-drop'
      },
      onVerify(stamps) {
-       this.state = 'verified'
        this.stamps = stamps
+       this.state = 'verified'
      },
      onFailedVerify() {
        this.state = 'failed-verification'
      },
-     onStamp(stamps) {
+     onStamp(hashStamped) {
+       this.hashStamped = hashStamped;
        this.state = 'stamped'
-       this.stamps = stamps
      },
      onFailedStamp() {
        this.state = 'failed-stamp'
