@@ -54,13 +54,17 @@ import axios from "axios"
 export default {
     /* eslint-disable */ 
     name: 'DropFile',
-    props: ['apiurl'],
+    props: ['apiurl','hash'],
     data: function() {
         return {
             loading: false,
             uploadedFiles: [],
             dragActive: false
         };
+    },
+    created: function () {
+        console.log('Aca ta el hash '+this.hash);
+        if(this.hash != null) this.verifyHash()
     },
     methods: {
         uploadFile() {
@@ -103,13 +107,47 @@ export default {
                 hashes: [self.uploadedFiles[0].hash]
             }).then((res) => {
                 //console.log(res.data)
-                self.$emit('stamp')
+                //self.$emit('stamp');
+                this.verifyStamp();
             }).catch((e) => {
                 //console.error(e)
                 self.$emit('failed-stamp')
             }).finally( () => self.loading = false )
         },
-        uploadFiles: function(f) {
+        verifyStamp() {
+            var self = this;
+            let hash = self.uploadedFiles[0].hash
+            let verifyUrl = `${this.apiurl}/verify/${hash}`
+            self.loading = true
+            axios.get(verifyUrl).then((res) => {
+                //console.log(res.data)
+                if (res.data.stamped) {
+                    self.$emit('stamp', res.data.stamps)
+                } else {
+                    self.$emit('failed-stamp')
+                }
+            }).catch((e) => {
+                self.$emit('failed-stamp')
+                //console.error(e)
+            }).finally( () => self.loading = false )
+        },
+        verifyHash() {
+            var self = this;
+            let verifyUrl = `${this.apiurl}/verify/${this.hash}`
+            self.loading = true
+            axios.get(verifyUrl).then((res) => {
+                //console.log(res.data)
+                if (res.data.stamped) {
+                    self.$emit('verify', res.data.stamps)
+                } else {
+                    self.$emit('failed-verify')
+                }
+            }).catch((e) => {
+                self.$emit('failed-verify')
+                //console.error(e)
+            }).finally( () => self.loading = false )
+        },
+        uploadFiles: function(f) {            
             var self = this;
             this.loading = true
             function loadFile(file) {
@@ -130,8 +168,7 @@ export default {
                     self.loading = false
                 };
                 reader.readAsArrayBuffer(file, "UTF-8")
-            }
-    
+            }    
             for (var i = 0; i < f.length; i++) {
                 loadFile(f[i]);
             }

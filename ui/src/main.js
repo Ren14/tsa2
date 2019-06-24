@@ -7,8 +7,9 @@ new Vue({
     render(h) {
         return h(App, {
             props: {
-                apiurl: this.$el.attributes.apiurl.value
+                apiurl: this.$el.attributes.apiurl.value,
+                hash: new URLSearchParams(window.location.search).get('hash')
             }
         })
-    } 
+    }
 }).$mount('#app')

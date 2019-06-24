@@ -2,7 +2,9 @@
   <div id="app">    
     <div>
         <div v-if="state == 'stamped'" class="dropAreasuccess-stamp alert alert-success" role="alert">
-          <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> El archivo <b>{{archivo}}</b> fue sellado con éxito en el bloque 666 el {{ stamp.unixtimestamp }}</p>
+          <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> El archivo <b>{{archivo}}</b> fue sellado con éxito en el bloque 
+          <span v-for="stamp in stamps" v-bind:key="stamp.stamper"><b>{{ stamp.block }}</b> el {{ convertTime(stamp.blocktimestamp) }}</span>
+          </p>
         </div>
         <div v-if="state=='failed-stamp'" class="fail-stamp alert alert-danger" role="alert">
           <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Se ha producido un error al intentar sellar el archivo <b>{{archivo}}</b>
@@ -12,7 +14,7 @@
           <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> El archivo <b>{{archivo}}</b> se encuentra sellado por:</p>
           <ul>
               <li v-for="stamp in stamps" v-bind:key="stamp.stamper">
-                  <b>{{ stamp.stamper }}</b> en el bloque <b>{{ stamp.block }}</b> el {{ stamp.unixtimestamp }}
+                  <b>{{ stamp.stamper }}</b> en el bloque <b>{{ stamp.block }}</b> el {{ convertTime(stamp.blocktimestamp)  }}
               </li>
           </ul>
         </div>
@@ -25,8 +27,9 @@
       </div>
       <DropFile
         :apiurl="apiurl"
+        :hash="hash"
         v-if="state == 'visible-drop'"
-        v-on:stamp="onStamp()" 
+        v-on:stamp="onStamp" 
         v-on:failed-stamp="onFailedStamp()" 
         v-on:verify="onVerify" 
         v-on:failed-verify="onFailedVerify()" 
@@ -40,7 +43,8 @@
  
  export default {
    name: 'app',
-   props: ['apiurl'],
+   props: ['apiurl','hash'],
+   
    data: function() {
      return {
        state: 'visible-drop',
@@ -48,9 +52,11 @@
        stamps: []
      }
    },
-   methods: {
+   methods: {     
      continuar() {
-       this.state = 'visible-drop'
+      // history.pushState('', '', '/');
+      window.location.search = ''
+      this.state = 'visible-drop'
      },
      onVerify(stamps) {
        this.state = 'verified'
@@ -59,14 +65,19 @@
      onFailedVerify() {
        this.state = 'failed-verification'
      },
-     onStamp() {
+     onStamp(stamps) {
        this.state = 'stamped'
+       this.stamps = stamps
      },
      onFailedStamp() {
        this.state = 'failed-stamp'
      },
      onFilename (value) {
       this.archivo = value
+    },
+    convertTime(timestamp){
+      var date = new Date(timestamp*1000)
+      return date
     }
    },
    components: {
