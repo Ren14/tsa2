@@ -21,12 +21,12 @@
             </svg>
             <!-- <img class="center-v" src="static/images/loader.svg" width="100px" height="100px" alt="Cargando"> -->
         </div>
+        <input type="file" id="fileUpload" @change="handleInput" hidden>
         <div>
             <div v-if="uploadedFiles.length == 0">
                 <div><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></div>
                 <div class="droptxt">Arrastrá un archivo aquí<br>ó</div>
                 <div><button type="button" class="btn btn-primary btn-pill" v-on:click.stop="uploadFile()">Seleccioná un archivo <span class="sr-only">para Sellar o Verificar</span></button></div>
-                <input type="file" id="fileUpload" @change="handleInput" hidden>
             </div>
             <div v-if="uploadedFiles.length > 0" class="file-info">
                 <p> 
@@ -44,7 +44,7 @@
             <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify(uploadedFiles[0].hash)">Verificar</button>
         </div>
         <div class="gobackLink font_small"  v-if="uploadedFiles.length > 0" >
-            <a href="#" v-on:click.stop="goBack()">Seleccionar otro archivo</a>
+            <a href="#" v-on:click.stop.prevent="goBack">Seleccionar otro archivo</a>
         </div>
     </div>
 </template>
@@ -76,8 +76,10 @@ export default {
             if (this.uploadedFiles.length <= 0) this.uploadFile();
         },
         handleInput(e) {
-            var files = e.target.files
-            this.uploadFiles([files[0]])
+            if(e.target.files.length > 0){
+                var files = e.target.files
+                this.uploadFiles([files[0]])
+            }
         },
         handleDrop(e) {
             var files = e.dataTransfer.files;
@@ -87,6 +89,7 @@ export default {
         },
         goBack(){     
             this.uploadedFiles = [];
+            document.getElementById("fileUpload").click()
         },
         verify(h) {
             var self = this;
