@@ -31,7 +31,25 @@
         <h1>Sello de Tiempo</h1>
         <p>El servicio de Sello de Tiempo de BFA permite demostrar que el contenido de cualquier documento digital existió en un momento y que desde entonces, no ha cambiado. Al sellar un archivo, cualquiera podrá verificar el día y la hora en que su hash fue almacenado en Blockchain Federal Argentina. Tené en cuenta que el documento seleccionado nunca se sube a la red, garantizando su privacidad.</p> 
         <p class="font_small"><a href="https://bfa.ar/sello">Si tenés un archivo con Recibo Digital (.rd) verificalo aquí</a></p>
-        <div id="app" apiurl="http://200.108.146.180:3000" timer="5"></div>
+        <div id="app" 
+          apiurl="http://200.108.146.180:3000" 
+          timer="5"
+          lb_00=" El archivo "
+          lb_01=" fue enviado con éxito para ser sellado"
+          lb_02="Se ha producido un error al intentar sellar "
+          lb_03=" se encuentra sellado por: "
+          lb_04=" en el bloque "
+          lb_05="No se ha podido verificar el archivo "
+          lb_06="Volver a Sellar o Verificar"
+          lb_07="Cargando"
+          lb_08="Arrastrá un archivo aquí<br>ó"
+          lb_09="Seleccioná un archivo <span class='sr-only'>para Sellar o Verificar</span>"
+          lb_10="Nombre del archivo: "
+          lb_11="Hash del archivo: "
+          lb_12="Sellar"
+          lb_13="Verificar"
+          lb_14="Seleccionar otro archivo"
+        ></div>
       </div>
     </div>
 </body>

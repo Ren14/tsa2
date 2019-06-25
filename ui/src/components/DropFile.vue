@@ -25,26 +25,26 @@
         <div>
             <div v-if="uploadedFiles.length == 0">
                 <div><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></div>
-                <div class="droptxt">Arrastrá un archivo aquí<br>ó</div>
-                <div><button type="button" class="btn btn-primary btn-pill" v-on:click.stop="uploadFile()">Seleccioná un archivo <span class="sr-only">para Sellar o Verificar</span></button></div>
+                <div class="droptxt" v-html="this.lb_08"></div>
+                <div><button type="button" class="btn btn-primary btn-pill" v-on:click.stop="uploadFile()" v-html="this.lb_09"></button></div>
             </div>
             <div v-if="uploadedFiles.length > 0" class="file-info">
                 <p> 
-                    Nombre del archivo: <b> {{ uploadedFiles[0].fileName }}</b> 
+                    <span v-html="this.lb_10"></span> <b> {{ uploadedFiles[0].fileName }}</b> 
                 </p>
                 <p class='hash'> 
-                    Hash del archivo: <b> {{ uploadedFiles[0].hash }}</b> 
+                    <span v-html="this.lb_11"></span> <b> {{ uploadedFiles[0].hash }}</b> 
                 </p>
             </div>
             <!-- <li v-for="(file,index) in uploadedFiles" v-bind:key="index">{{file.fileName}}: {{file.hash}}</li> -->
         </div>
 
         <div>
-            <button class="btn btn-lg btn-primary btn-pill" v-if="uploadedFiles.length > 0" v-on:click="stamp()">Sellar</button>
-            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify(uploadedFiles[0].hash)">Verificar</button>
+            <button class="btn btn-lg btn-primary btn-pill" v-if="uploadedFiles.length > 0" v-on:click="stamp()" v-html="this.lb_12"></button>
+            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify(uploadedFiles[0].hash)" v-html="this.lb_13"></button>
         </div>
         <div class="gobackLink font_small"  v-if="uploadedFiles.length > 0" >
-            <a href="#" v-on:click.stop.prevent="goBack">Seleccionar otro archivo</a>
+            <a href="#" v-on:click.stop.prevent="goBack" v-html="this.lb_14"></a>
         </div>
     </div>
 </template>
@@ -56,7 +56,17 @@ import axios from "axios"
 export default {
     /* eslint-disable */ 
     name: 'DropFile',
-    props: ['apiurl','timer'],
+    props: ['apiurl',
+           'timer',
+           'lb_07',
+           'lb_08',
+           'lb_09',
+           'lb_10',
+           'lb_11',
+           'lb_12',
+           'lb_13',
+           'lb_14'
+          ],
     data: function() {
         return {
             loading: false,
