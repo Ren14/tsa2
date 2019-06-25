@@ -79,6 +79,8 @@
     },
     convertTime(timestamp){
       var date = new Date(timestamp*1000)
+      var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
+      date = date.toLocaleDateString('es-AR', options)
       return date
     }
    },
