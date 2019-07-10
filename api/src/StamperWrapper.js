@@ -1,7 +1,5 @@
 import { sign } from "crypto";
 
-//const stamperInterface = require('../../contract/build/contracts/Stamper.json')
-
 class Stamper {
     constructor(web3, contractAbi, contractAddress) {
         this.web3 = web3
@@ -9,21 +7,23 @@ class Stamper {
         this.contract = new web3.eth.Contract(contractAbi, contractAddress)
     }
 
-    // stampea un conjunto de hashes.
-    // si walletAccount es undefined trata de usar la account de web3.eth.defaultAccount
-    async stamp(hashes, walletAccount) {
-        console.log(`stamping ${hashes}`)
+    // stampea un conjunto de objects (hashes) recibido como array
+    // utiliza la cuenta walletAccount para enviar la transaccion
+    // (o defaultAccount si no se especifica)
+    async stamp(objects, walletAccount) {
+        console.log(`stamping ${objects}`)
 
+        // si walletAccount es undefined trata de usar la account de web3.eth.defaultAccount
         let defaultAccount = (walletAccount) ? walletAccount.address : this.web3.eth.defaultAccount
-        let hashesToStamp = []
+        let objectsToStamp = []
 
-        for (let i=0; i < hashes.length; i++) {
-            let blockNo = await this.contract.methods.getBlockNo(hashes[i], defaultAccount).call()
-            if (blockNo == 0) hashesToStamp.push(hashes[i])
+        for (let i=0; i < objects.length; i++) {
+            let blockNo = await this.contract.methods.getBlockNo(objects[i], defaultAccount).call()
+            if (blockNo == 0) objectsToStamp.push(objects[i])
         }
 
-        if (hashesToStamp.length == 0) return new Promise( (resolve) => {
-            console.log(`Los hashes enviados ya están stampeados`)
+        if (objectsToStamp.length == 0) return new Promise( (resolve) => {
+            console.log(`Los objects enviados ya están stampeados`)
             resolve()
         })
 
@@ -31,7 +31,7 @@ class Stamper {
         let gasLimit = 2000000
 
         if (walletAccount) {
-            let methodPut = this.contract.methods.put(hashesToStamp)
+            let methodPut = this.contract.methods.put(objectsToStamp)
             let encodedABI = methodPut.encodeABI()
 
             let tx = {
@@ -52,15 +52,15 @@ class Stamper {
             // txPromise = this.web3.eth.sendSignedTransaction('0x' + signedTx.serialize().toString('hex'))
             txPromise = this.web3.eth.sendSignedTransaction(signedTx.rawTransaction)
         } else {
-            txPromise = this.contract.methods.put(hashesToStamp).send({
+            txPromise = this.contract.methods.put(objectsToStamp).send({
                 from: defaultAccount,
                 gasLimit: gasLimit
             })
         }
 
         txPromise.then((receipt) => {
-            console.log(`> hashes stampeados en bloque: ${receipt.blockNumber}`)
-            console.log(hashesToStamp)
+            console.log(`> objects stampeados en bloque: ${receipt.blockNumber}`)
+            console.log(objectsToStamp)
         }).catch((error) => {
             console.error(error)
         })
@@ -77,34 +77,34 @@ class Stamper {
 
     async wait1block() {
         return new Promise((resolve, reject) => {
-	    let max = 10;
-	    let web3 = this.web3;
-	    web3.eth.getBlockNumber()
+        let max = 10;
+        let web3 = this.web3;
+        web3.eth.getBlockNumber()
             .then(
-		(startnum) => {
-	            setTimeout( 
-		        function nextblock()
-		        {
-            		    web3.eth.getBlockNumber()
-			    .then(
-				(nownum) => {
-	    		            if ( nownum != startnum )
-			                resolve( nownum );
-			            else
-	    		            if ( max-- > 0 )
-	        	                setTimeout( nextblock, 500 )
-	    		            else
-	        	                reject( 'Timeout. Tal vez no esta sincronizado el nodo local' )
-				},
-				reject
-			    )
-		        },
-		        500
-		    )
-	    	},
-	    	(errtxt) => { reject('No conseguimos el blockNumber.\n'+errtxt) }
-	    )
-	})
+        (startnum) => {
+                setTimeout( 
+                function nextblock()
+                {
+                        web3.eth.getBlockNumber()
+                .then(
+                (nownum) => {
+                            if ( nownum != startnum )
+                            resolve( nownum );
+                        else
+                            if ( max-- > 0 )
+                                setTimeout( nextblock, 500 )
+                            else
+                                reject( 'Timeout. Tal vez no esta sincronizado el nodo local' )
+                },
+                reject
+                )
+                },
+                500
+            )
+            },
+            (errtxt) => { reject('No conseguimos el blockNumber.\n'+errtxt) }
+        )
+    })
     }
 
     async verify(hash) {
