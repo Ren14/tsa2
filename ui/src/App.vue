@@ -11,8 +11,8 @@
         <div v-if="state=='verified'" class="success-verify alert alert-success" role="alert">
           <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="this.lb_00"></span> <b>{{archivo}}</b> <span v-html="this.lb_03"></span></p>
           <ul>
-              <li v-for="stamp in stamps" v-bind:key="stamp.stamper">
-                  <b>{{ stamp.stamper }}</b> <span v-html="lb_04"></span> <b>{{ stamp.block }}</b> {{ convertTime(stamp.blocktimestamp)  }}
+              <li v-for="stamp in stamps" v-bind:key="stamp.whostamped">
+                  <b>{{ stamp.whostamped }}</b> <span v-html="lb_04"></span> <b>{{ stamp.blocknumber }}</b> {{ convertTime(stamp.blocktimestamp)  }}
               </li>
           </ul>
         </div>
@@ -25,7 +25,6 @@
       </div>
       <DropFile
         :apiurl="apiurl"
-        :timer="timer"
         :lb_07="lb_07"
         :lb_08="lb_08"
         :lb_09="lb_09"
@@ -50,7 +49,6 @@
  export default {
    name: 'app',
    props: ['apiurl',
-           'timer',
            'lb_00',
            'lb_01',
            'lb_02',

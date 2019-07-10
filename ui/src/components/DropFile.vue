@@ -57,7 +57,6 @@ export default {
     /* eslint-disable */ 
     name: 'DropFile',
     props: ['apiurl',
-           'timer',
            'lb_07',
            'lb_08',
            'lb_09',
@@ -126,19 +125,16 @@ export default {
             self.loading = true
             axios.post(stampUrl, {
                 hashes: [self.uploadedFiles[0].hash]
-            }).then((res) => {
-                self.waitToVerify();
-                //self.$emit('stamp', self.uploadedFiles[0].hash);
-                //this.verify(self.uploadedFiles[0].hash);
-            }).catch((e) => {
+            }).then(
+	       axios.get(`${this.apiurl}/wait1block`)
+               .then(() => {
+                 //self.$emit('stamp', self.uploadedFiles[0].hash);
+                 this.verify(self.uploadedFiles[0].hash);
+               })
+            ).catch((e) => {
                 //console.error(e)
                 self.$emit('failed-stamp')
             })
-        },
-        waitToVerify(){
-            var self = this;
-            var t = this.timer * 1000;
-            setTimeout(function(){ self.verify(self.uploadedFiles[0].hash) }, t);
         },
         uploadFiles: function(f) {            
             var self = this;

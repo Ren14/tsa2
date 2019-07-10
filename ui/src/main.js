@@ -23,7 +23,6 @@ new Vue({
         return h(App, { 
             props: {
                 apiurl: this.$el.attributes.apiurl.value,
-                timer: this.$el.attributes.timer.value,
                 lb_00: this.$el.attributes.lb_00.value,
                 lb_01: this.$el.attributes.lb_01.value,
                 lb_02: this.$el.attributes.lb_02.value,
