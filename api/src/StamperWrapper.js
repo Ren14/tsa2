@@ -75,6 +75,38 @@ class Stamper {
         })
     }
 
+    async wait1block() {
+        return new Promise((resolve, reject) => {
+	    let max = 10;
+	    let web3 = this.web3;
+	    web3.eth.getBlockNumber()
+            .then(
+		(startnum) => {
+	            setTimeout( 
+		        function nextblock()
+		        {
+            		    web3.eth.getBlockNumber()
+			    .then(
+				(nownum) => {
+	    		            if ( nownum != startnum )
+			                resolve( nownum );
+			            else
+	    		            if ( max-- > 0 )
+	        	                setTimeout( nextblock, 500 )
+	    		            else
+	        	                reject( 'Timeout. Tal vez no esta sincronizado el nodo local' )
+				},
+				reject
+			    )
+		        },
+		        500
+		    )
+	    	},
+	    	(errtxt) => { reject('No conseguimos el blockNumber.\n'+errtxt) }
+	    )
+	})
+    }
+
     async verify(hash) {
         try {
             let count = await this.contract.methods.getObjectCount(hash).call()
@@ -85,10 +117,16 @@ class Stamper {
 
             var stamps = []
             for (var i = 0; i < count; i++) {
-                let stampPos = await this.contract.methods.getObjectPos(hash, i).call()
-                let stamp = await this.contract.methods.getStamplistPos(stampPos).call()
-
-                stamps.push({ stamper: stamp[1], block: stamp[2].toString() })
+                let stampPos    =       await this.contract.methods.getObjectPos(hash, i).call()
+                let stamp       =       await this.contract.methods.getStamplistPos(stampPos).call()
+                let whostamped  =       stamp[1];
+                let blockno     =       stamp[2];
+                let block       =       await this.web3.eth.getBlock( blockno );
+                stamps.push({
+                        whostamped:     whostamped,
+                        blocknumber:    blockno.toString(),
+                        blocktimestamp: block.timestamp
+                });
             }
 
             console.log(`exito verificación ${hash}`)

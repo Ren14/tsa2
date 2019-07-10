@@ -102,6 +102,23 @@ if (process.env.API_USER && process.env.API_PASS) {
 /***************************************************/
 // API Endpoints
 /***************************************************/
+app.get('/wait1block', async (req, res) => {
+    let ss = new Stamper(web3, contractAbi, contractAddress)
+
+    try {
+        let blockno = await ss.wait1block()
+        return res.json(
+	    {
+		success: true,
+		blocknumber: blockno
+	    }
+	)
+    } catch (e) {
+        console.error( e )
+        res.status( 500 )
+        res.send( e )
+    }
+})
 app.post('/stamp', async (req, res) => {
     let ss = new Stamper(web3, contractAbi, contractAddress)
 
