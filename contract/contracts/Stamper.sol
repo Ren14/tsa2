@@ -1,4 +1,5 @@
 // 20190401 Robert Martin-Legene <robert@nic.ar>
+// 20190507 Andres Blanco <ablanco@siu.edu.ar>
 // Stamper
 // vim:filetype=javascript
 
@@ -10,6 +11,8 @@ contract Stamper {
         address stamper;
         uint256 blockNo;
     }
+    // Lista de stamps (cada entrada tiene el hash del object, la cuenta que lo envio
+    //                  y el numero de bloque en que se guardo)
     Stamp[] stampList;
 
     // Mapping de objects stampeados a la stampList
@@ -35,19 +38,23 @@ contract Stamper {
         stampList.push(Stamp(0, msg.sender, block.number));
     }
 
-    // Stampear una lista de objects (hashes)
+    // Stampear una lista de objects (hashes) recibido como array
     function put( bytes32[] memory objectList ) public {
         uint256 i = 0;
         uint256 max = objectList.length;
         while ( i<max )
         {
-            bytes32 h = objectList[i];
-            // stampList.push devuelve la longitud, restamos 1 para usar como indice
-            uint256 idx = stampList.push(Stamp(h, msg.sender, block.number)) - 1;
-            hashObjects[h].push(idx);
-            hashStampers[msg.sender].push(idx);
+            // este object
+            bytes32 object = objectList[i];
+            // lo agregamos a la stampList
+            // stampList.push devuelve la longitud, restamos 1 para usar como indice de la nueva entrada
+            uint256 newObjectIndex = stampList.push(Stamp(object, msg.sender, block.number)) - 1;
+            // lo mapeamos desde la lista de objects
+            hashObjects[object].push(newObjectIndex);
+            // lo mapeamos desde la lista de stampers
+            hashStampers[msg.sender].push(newObjectIndex);
 
-            emit Stamped(msg.sender, h, block.number);
+            emit Stamped(msg.sender, object, block.number);
 
             i++;
         }
@@ -71,7 +78,8 @@ contract Stamper {
         return hashObjects[object][pos];
     }
 
-    // devuelve el nro de bloque en el que stamper registro object. Si no fue stampeado devuelve 0
+    // devuelve el nro de bloque en el que este stamper registro este object por primera vez
+    // Si no fue stampeado por este stamper devuelve 0
     function getBlockNo( bytes32 object, address stamper ) public view returns (uint256)
     {
         uint length = hashObjects[object].length;
@@ -91,7 +99,7 @@ contract Stamper {
         return hashStampers[stamper].length;
     }
 
-    // devuelve la ubicacion en la sstamplist de un Stamp especifico de este stamper
+    // devuelve la ubicacion en la stampList de un Stamp especifico de este stamper
     function getStamperPos( address stamper, uint256 pos ) public view returns (uint256)
     {
         return hashStampers[stamper][pos];
