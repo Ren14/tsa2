@@ -38,7 +38,8 @@ class Stamper {
                 to: this.contractAddress,
                 // v: 47525974938 * 35 + 2,
                 // v: 47525974938,
-                chainId: '200941592',
+                // Parece que sin chainId funciona igual - hasta a veces mejor.
+                //chainId: '200941592',
                 gas: gasLimit,
                 // gasLimit: gasLimit,
                 data: encodedABI
