@@ -14,10 +14,18 @@
               <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="lb_00"></span> <b>{{value.fileName}}</b> <span v-html="lb_03"></span></p>
               <ul>
                   <li v-for="(stamp, index) in value.stamps" :key="index">
-                      <b>{{ stamp.whostamped }}</b> <span v-html="lb_04"></span> <b>{{ stamp.blocknumber }}</b> {{ convertTime(stamp.blocktimestamp)  }}
+                      <span class="hash"><b>{{ stamp.whostamped }}</b></span> <span v-html="lb_04"></span> <b>{{ stamp.blocknumber }}</b> {{ convertTime(stamp.blocktimestamp)  }}
                   </li>
               </ul>
-              <p><button class="btn btn-default btn-sm copiar" v-on:click="copiarURL(index)"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button></p>
+              <div class="copiar">
+              <div class="input-group">
+                <label class="sr-only" v-html="lb_16"></label>
+                <input class="form-control input-sm" type="textfield" readonly :value="getHashURL(index)" :id="'id_'+index" >
+                <span class="input-group-btn">
+                  <button class="btn btn-default btn-sm" v-on:click="copiarURL(index)"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button>
+                </span>
+              </div>
+            </div>
             </div>
             <div v-else class="fail-verify alert alert-danger" role="alert" >
               <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span v-html="lb_05"></span> <b>{{value.fileName}}</b></p>
@@ -28,13 +36,20 @@
         <div v-if="state=='verified'" class="success-verify alert alert-success" role="alert">
           <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="this.lb_00"></span> <b>{{archivo}}</b> <span v-html="this.lb_03"></span></p>
           <ul>
-              <li v-for="stamp in stamps" v-bind:key="stamp.whostamped">
-                  <b>{{ stamp.whostamped }}</b> <span v-html="lb_04"></span> <b>{{ stamp.blocknumber }}</b> {{ convertTime(stamp.blocktimestamp)  }}
+              <li v-for="(stamp, index) in stamps" :key="index">
+                  <span class="hash"><b>{{ stamp.whostamped }}</b></span> <span v-html="lb_04"></span> <b>{{ stamp.blocknumber }}</b> {{ convertTime(stamp.blocktimestamp)  }}
               </li>
           </ul>
-          <p><button class="btn btn-default btn-sm copiar" v-on:click="copiarCurrentURL"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button></p>
+          <div class="copiar">
+            <div class="input-group">
+              <label class="sr-only" v-html="lb_16"></label>
+              <input class="form-control input-sm" type="textfield" readonly :value="getHashURL(null)" id="id_single">
+              <span class="input-group-btn">
+                <button class="btn btn-default btn-sm" v-on:click="copiarURL(null)"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button>
+              </span>
+            </div>
+          </div>
         </div>
-
         <div v-if="state=='failed-verification'" class="fail-verify alert alert-danger">
           <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span v-html="this.lb_05"></span> <b>{{archivo}}</b></p>
         </div>
@@ -84,7 +99,8 @@
            'lb_12',
            'lb_13',
            'lb_14',
-           'lb_15'
+           'lb_15',
+           'lb_16'
           ],
    computed: {
     hash () {
@@ -125,17 +141,27 @@
      },
      onFilename (value) {
       this.archivo = value
+    },    
+    getHashURL(index){
+      var url;
+      if (index == null){
+        url = window.location.href;
+      }else{
+        url = window.location.href+'hash/'+this.allFiles[index].hash;
+      }
+      return url;
     },
     copiarURL(index){
-      this.copiar(window.location.href+'hash/'+this.allFiles[index].hash);
+      if (index == null){
+        // this.copiar(window.location.href);
+        this.copiar('id_single');
+      }else{
+        // this.copiar(window.location.href+'hash/'+this.allFiles[index].hash);
+        this.copiar('id_'+index);
+      }
     },
-    copiarCurrentURL(){
-      this.copiar(window.location.href);
-    },
-    copiar(t){
-        var copyText = document.createElement("textarea");
-        copyText.value = t;
-        document.body.appendChild(copyText);
+    copiar(id){
+        var copyText = document.getElementById(id);
         copyText.focus();
       /* Select the text field */
         copyText.select();
@@ -143,7 +169,6 @@
         /* Copy the text inside the text field */
         document.execCommand("copy");
         //console.log("Copied the text: " + copyText.value);
-        document.body.removeChild(copyText);
     },
     convertTime(timestamp){
       var date = new Date(timestamp*1000)
