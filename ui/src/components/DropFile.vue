@@ -21,7 +21,7 @@
             </svg>
             <!-- <img class="center-v" src="static/images/loader.svg" width="100px" height="100px" alt="Cargando"> -->
         </div>
-        <input type="file" id="fileUpload" @change="handleInput" hidden>
+        <input type="file" id="fileUpload" @change="handleInput" multiple hidden>
         <div>
             <div v-if="uploadedFiles.length == 0">
                 <div><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></div>
@@ -29,19 +29,27 @@
                 <div><button type="button" class="btn btn-primary btn-pill" v-on:click.stop="uploadFile()" v-html="this.lb_09"></button></div>
             </div>
             <div v-if="uploadedFiles.length > 0" class="file-info">
-                <p> 
-                    <span v-html="this.lb_10"></span> <b> {{ uploadedFiles[0].fileName }}</b> 
-                </p>
-                <p class='hash'> 
-                    <span v-html="this.lb_11"></span> <b> {{ uploadedFiles[0].hash }}</b> 
-                </p>
+                <ul>
+
+                <li v-for="(value, index) in uploadedFiles" :key="index">
+                    <p>
+                        <span v-html="lb_10"></span> 
+                        <b> {{ value.fileName }}</b> 
+                    </p>
+                    <p class='hash font_small'> 
+                        <span v-html="lb_11"></span> 
+                        <b> {{ value.hash }}</b> 
+                    </p>
+                    <button class="btn btn-default remover" v-on:click="removeFile"><span class="glyphicon glyphicon-trash text-danger " aria-hidden="true"></span> <span class="sr-only">Remover archivo</span></button>
+                </li>
+                </ul>
             </div>
             <!-- <li v-for="(file,index) in uploadedFiles" v-bind:key="index">{{file.fileName}}: {{file.hash}}</li> -->
         </div>
 
         <div>
             <button class="btn btn-lg btn-primary btn-pill" v-if="uploadedFiles.length > 0" v-on:click="stamp()" v-html="this.lb_12"></button>
-            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify(uploadedFiles[0].hash)" v-html="this.lb_13"></button>
+            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify()" v-html="this.lb_13"></button>
         </div>
         <div class="gobackLink font_small"  v-if="uploadedFiles.length > 0" >
             <a href="#" v-on:click.stop.prevent="goBack" v-html="this.lb_14"></a>
@@ -68,8 +76,10 @@ export default {
           ],
     data: function() {
         return {
-            loading: false,
+            loading: false,            
             uploadedFiles: [],
+            verifyCounter: 0,
+            allHashes: [],
             dragActive: false
         };
     },
@@ -87,36 +97,61 @@ export default {
         handleInput(e) {
             if(e.target.files.length > 0){
                 var files = e.target.files
-                this.uploadFiles([files[0]])
+                this.uploadFiles([files])
             }
         },
         handleDrop(e) {
             var files = e.dataTransfer.files;
             //console.log("Drop files:", files);
             //this.uploadFile(files);
-            this.uploadFiles([files[0]]);
+            this.uploadFiles([files]);
+        },
+        removeFile(e) {
+            //Lo saca del array pero no del input
+            var li = e.target.closest('li');
+            var nodes = Array.from( li.closest('ul').children );
+            var index = nodes.indexOf( li );
+            this.uploadedFiles.splice(index, 1);
         },
         goBack(){     
             this.uploadedFiles = [];
+            
             document.getElementById("fileUpload").click()
         },
-        verify(h) {
+        verify() {
             var self = this;
-            let verifyUrl = `${this.apiurl}/verify/`+h
-            self.loading = true
-            axios.get(verifyUrl).then((res) => {
-                //console.log(res.data)
-                if (res.data.stamped) {
-                    self.$emit('verify', res.data.stamps)
-                    this.$router.push('/hash/'+h)
-                    this.$route.params.pathMatch
-                } else {
-                    self.$emit('failed-verify')
-                }
-            }).catch((e) => {
-                self.$emit('failed-verify')
-                //console.error(e)
-            }).finally( () => self.loading = false )
+            for (let i = 0; i < self.uploadedFiles.length; i++) {
+                    
+                var h = self.allHashes[i];
+                let verifyUrl = `${this.apiurl}/verify/`+h
+                self.loading = true
+                axios.get(verifyUrl).then((res) => {
+                    //console.log(res.data)
+                    if (res.data.stamped) {
+                        //self.$emit('verify', res.data.stamps)
+                        //this.$router.push('/hash/'+h)
+                        //this.$route.params.pathMatch
+                        self.uploadedFiles[i].verified = true;
+                        self.uploadedFiles[i].stamps = res.data.stamps;
+                        self.checkVerify()
+                    } else {
+                        //self.$emit('failed-verify')
+                        self.uploadedFiles[i].verified = false;
+                        self.checkVerify()
+                    }
+                }).catch((e) => {
+                    //self.$emit('failed-verify')
+                    //console.error(e)
+                    self.uploadedFiles[i].verified = false;
+                    self.checkVerify()
+                }).finally( () => self.loading = false )                
+            }
+            //self.$emit('verify-completed', self.uploadedFiles)
+        },
+        checkVerify(){
+            var self = this;
+            self.verifyCounter++;
+            if (self.verifyCounter == self.uploadedFiles.length) self.$emit('verify-completed', self.uploadedFiles)
         },
         stamp() {
             var self = this;
@@ -124,12 +159,12 @@ export default {
             let stampUrl = `${this.apiurl}/stamp`
             self.loading = true
             axios.post(stampUrl, {
-                hashes: [self.uploadedFiles[0].hash]
+                hashes: self.allHashes
             }).then(
 	       axios.get(`${this.apiurl}/wait1block`)
                .then(() => {
                  //self.$emit('stamp', self.uploadedFiles[0].hash);
-                 this.verify(self.uploadedFiles[0].hash);
+                 this.verify();
                })
             ).catch((e) => {
                 //console.error(e)
@@ -138,8 +173,8 @@ export default {
         },
         uploadFiles: function(f) {            
             var self = this;
-            this.loading = true
-            function loadFile(file) {
+            this.loading = true;
+            function loadFile(file) {                
                 let name = file.name
                 self.$emit('nombreArchivo', name)
                 let reader = new FileReader()
@@ -149,17 +184,18 @@ export default {
                     let hash = SHA256.create()
                     hash.update(contents)
                     let hex = hash.hex()
-                    // replace for time being
-                    self.uploadedFiles = [{ 
+                    // // replace for time being
+                    self.uploadedFiles.push({ 
                         fileName: name,
                         hash: hex
-                    }]
-                    self.loading = false
+                    });
+                    self.allHashes.push (hex);
+                    self.loading = false;
                 };
                 reader.readAsArrayBuffer(file, "UTF-8")
             }    
-            for (var i = 0; i < f.length; i++) {
-                loadFile(f[i]);
+            for (var i = 0; i < f[0].length; i++) {
+                loadFile(f[0][i]);
             }
         }
     },

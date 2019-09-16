@@ -16,6 +16,22 @@
               </li>
           </ul>
         </div>
+        <div v-if="state=='verify-completed'">
+          <div v-for="(value, index) in allFiles" :key="index">
+            <div v-if="value.verified" class="success-verify alert alert-success" role="alert">
+              <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="lb_00"></span> <b>{{value.fileName}}</b> <span v-html="lb_03"></span></p>
+              <ul>
+                  <li v-for="(stamp, index) in value.stamps" :key="index">
+                      <b>{{ stamp.whostamped }}</b> <span v-html="lb_04"></span> <b>{{ stamp.blocknumber }}</b> {{ convertTime(stamp.blocktimestamp)  }}
+                  </li>
+              </ul>
+            </div>
+            <div v-else class="fail-verify alert alert-danger" role="alert" >
+              <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span v-html="lb_05"></span> <b>{{value.fileName}}</b></p>
+            </div>
+          </div>
+        </div>
+
         <div v-if="state=='failed-verification'" class="fail-verify alert alert-danger">
           <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span v-html="this.lb_05"></span> <b>{{archivo}}</b></p>
         </div>
@@ -37,6 +53,7 @@
         v-on:stamp="onStamp" 
         v-on:failed-stamp="onFailedStamp()" 
         v-on:verify="onVerify" 
+        v-on:verify-completed="onVerifyCompleted" 
         v-on:failed-verify="onFailedVerify()" 
         v-on:nombreArchivo="onFilename"
       />
@@ -87,8 +104,12 @@
        this.stamps = stamps
        this.state = 'verified'
      },
+     onVerifyCompleted(allFiles) {
+       this.allFiles = allFiles
+       this.state = 'verify-completed'
+     },
      onFailedVerify() {
-       this.state = 'failed-verification'
+       this.state = 'failed-verification'       
      },
      onStamp(hashStamped) {
        this.hashStamped = hashStamped;
