@@ -38,6 +38,7 @@ new Vue({
                 lb_12: this.$el.attributes.lb_12.value,
                 lb_13: this.$el.attributes.lb_13.value,
                 lb_14: this.$el.attributes.lb_14.value,            
+                lb_15: this.$el.attributes.lb_15.value,            
             }
         })
     }

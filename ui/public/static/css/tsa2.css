@@ -11,6 +11,21 @@
     /* transition: 0.3s; */
     position: relative;
 }
+.tsa2 .dropArea ul>li{
+    border-bottom: 1px solid #ccc;;
+    list-style: none;
+    padding: 10px 0;
+    position: relative;
+}
+
+.tsa2 .dropArea ul>li .remover{
+    position: absolute;
+    top: 10px;
+    right: 0;
+}
+.tsa2 .dropArea ul>li:last-child{
+    border-bottom: none;
+}
 .tsa2 .btn-primary:active, .tsa2 .btn-primary:active:hover, .tsa2 .btn-primary:focus, .tsa2 .btn-primary:hover {
     background-color: #fff;
     color: #0094d4;
@@ -37,7 +52,9 @@
 .tsa2 .dropArea p {
     margin-bottom: 5px;
 }
-
+.tsa2 .dropArea ul>li p{
+    margin-right: 40px;
+}
 .tsa2 .dropArea:hover {
     border-style: solid;
     background: rgba(0, 148, 212, 0.05);
@@ -80,6 +97,7 @@
     -webkit-border-radius: 5px;
     border-radius: 5px;
 }
+
 
 @keyframes pulse {
     0% {
@@ -125,6 +143,11 @@
 .drop-file {
     width: 100%;
     height: 100%;
+}
+
+
+.tsa2 .alert-success .copiar   {
+    margin-top: 10px;
 }
 
 
