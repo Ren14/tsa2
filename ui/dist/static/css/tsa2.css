@@ -98,6 +98,7 @@
     border-radius: 5px;
 }
 
+
 @keyframes pulse {
     0% {
        opacity: 1.0;
@@ -142,6 +143,11 @@
 .drop-file {
     width: 100%;
     height: 100%;
+}
+
+
+.tsa2 .alert-success .copiar   {
+    margin-top: 10px;
 }
 
 

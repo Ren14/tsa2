@@ -85,7 +85,7 @@ export default {
     },
     created: function () {
         var h = this.$route.params.hash;
-        if(h != undefined) this.verify(h)        
+        if(h != undefined) this.verifybyURL(h);   
     },
     methods: {
         uploadFile() {
@@ -112,10 +112,10 @@ export default {
             var nodes = Array.from( li.closest('ul').children );
             var index = nodes.indexOf( li );
             this.uploadedFiles.splice(index, 1);
+            this.allHashes.splice(index, 1);
         },
         goBack(){     
-            this.uploadedFiles = [];
-            
+            this.uploadedFiles = [];            
             document.getElementById("fileUpload").click()
         },
         verify() {
@@ -129,8 +129,11 @@ export default {
                     //console.log(res.data)
                     if (res.data.stamped) {
                         //self.$emit('verify', res.data.stamps)
-                        //this.$router.push('/hash/'+h)
-                        //this.$route.params.pathMatch
+                        if(self.uploadedFiles.length <= 1)
+                        {
+                            this.$router.push('/hash/'+h)
+                            this.$route.params.pathMatch
+                        }
                         self.uploadedFiles[i].verified = true;
                         self.uploadedFiles[i].stamps = res.data.stamps;
                         self.checkVerify()
@@ -152,6 +155,25 @@ export default {
             var self = this;
             self.verifyCounter++;
             if (self.verifyCounter == self.uploadedFiles.length) self.$emit('verify-completed', self.uploadedFiles)
+        },
+        verifybyURL(h){
+            var self = this;
+            let verifyUrl = `${this.apiurl}/verify/`+h
+            self.loading = true
+            axios.get(verifyUrl).then((res) => {
+                //console.log(res.data)
+                if (res.data.stamped) {
+                    self.$emit('verify', res.data.stamps)
+                    this.$router.push('/hash/'+h)
+                    this.$route.params.pathMatch
+                } else {
+                    self.$emit('failed-verify')
+                }
+            }).catch((e) => {
+                self.$emit('failed-verify')
+                //console.error(e)
+            }).finally( () => self.loading = false )  
+
         },
         stamp() {
             var self = this;
