@@ -138,6 +138,7 @@ export default {
         },
         verify() {
             var self = this;
+            self.verifyCounter = 0;
             for (let i = 0; i < self.uploadedFiles.length; i++) {
                     
                 var h = self.allHashes[i];
@@ -147,11 +148,11 @@ export default {
                     //console.log(res.data)
                     if (res.data.stamped) {
                         //self.$emit('verify', res.data.stamps)
-                        if(self.uploadedFiles.length <= 1)
-                        {
-                            this.$router.push('/hash/'+h)
-                            this.$route.params.pathMatch
-                        }
+                        // if(self.uploadedFiles.length <= 1)
+                        // {
+                        //     this.$router.push('/hash/'+h)
+                        //     this.$route.params.pathMatch
+                        // }
                         self.uploadedFiles[i].verified = true;
                         self.uploadedFiles[i].stamps = res.data.stamps;
                         self.checkVerify()

@@ -18,8 +18,8 @@
                   </li>
               </ul>
               <div class="copiar">
+              <label class="font_small" v-html="lb_16" :for="'id_'+index"></label>
               <div class="input-group">
-                <label class="sr-only" v-html="lb_16"></label>
                 <input class="form-control input-sm" type="textfield" readonly :value="getHashURL(index)" :id="'id_'+index" >
                 <span class="input-group-btn">
                   <button class="btn btn-default btn-sm" v-on:click="copiarURL(index)"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button>
@@ -41,8 +41,8 @@
               </li>
           </ul>
           <div class="copiar">
+            <label class="font_small" v-html="lb_16" for="id_single"></label>
             <div class="input-group">
-              <label class="sr-only" v-html="lb_16"></label>
               <input class="form-control input-sm" type="textfield" readonly :value="getHashURL(null)" id="id_single">
               <span class="input-group-btn">
                 <button class="btn btn-default btn-sm" v-on:click="copiarURL(null)"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button>
@@ -148,6 +148,7 @@
     },    
     getHashURL(index){
       var url;
+      //console.log(index);
       if (index == null){
         url = window.location.href;
       }else{
