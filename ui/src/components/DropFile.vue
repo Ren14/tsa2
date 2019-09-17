@@ -159,11 +159,12 @@ export default {
                     } else {
                         //self.$emit('failed-verify')
                         self.uploadedFiles[i].verified = false;
+                        // console.error('Verify '+res.data.stamped)
                         self.checkVerify()
                     }
                 }).catch((e) => {
                     //self.$emit('failed-verify')
-                    //console.error(e)
+                    console.error(e)
                     self.uploadedFiles[i].verified = false;
                     self.checkVerify()
                 }).finally( () => self.loading = false )                
@@ -202,13 +203,15 @@ export default {
             axios.post(stampUrl, {
                 hashes: self.allHashes
             }).then(
-	       axios.get(`${this.apiurl}/wait1block`)
-               .then(() => {
-                 //self.$emit('stamp', self.uploadedFiles[0].hash);
-                 this.verify();
-               })
+                axios.get(`${this.apiurl}/wait1block`).then(
+                    axios.get(`${this.apiurl}/wait1block`).then(() => {
+                        //console.log('Verificar:'+ self.allHashes)
+                        //self.$emit('stamp', self.uploadedFiles[0].hash);
+                        this.verify();
+                    })
+                )
             ).catch((e) => {
-                //console.error(e)
+                console.error(e)
                 self.$emit('failed-stamp')
             })
         },
