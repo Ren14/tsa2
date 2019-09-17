@@ -40,20 +40,31 @@
                         <span v-html="lb_11"></span> 
                         <b> {{ value.hash }}</b> 
                     </p>
-                    <button class="btn btn-default remover" v-on:click="removeFile"><span class="glyphicon glyphicon-trash text-danger " aria-hidden="true"></span> <span class="sr-only">Remover archivo</span></button>
+                    <button class="btn btn-default remover" v-on:click.stop.prevent="removeFile">
+                        <span class="glyphicon glyphicon-trash text-danger " aria-hidden="true"></span> 
+                        <span v-html="lb_17" class="sr-only"></span>
+                    </button>
                 </li>
                 </ul>
             </div>
             <!-- <li v-for="(file,index) in uploadedFiles" v-bind:key="index">{{file.fileName}}: {{file.hash}}</li> -->
         </div>
-
-        <div>
-            <button class="btn btn-lg btn-primary btn-pill" v-if="uploadedFiles.length > 0" v-on:click="stamp()" v-html="this.lb_12"></button>
-            <button class="btn btn-lg btn-success btn-pill" v-if="uploadedFiles.length > 0" v-on:click="verify()" v-html="this.lb_13"></button>
+        <div class="add-btn" v-if="uploadedFiles.length > 0" >
+            <a class="btn btn-default btn-pill"  href="#" v-on:click.stop.prevent="addFile" >
+                <span class="glyphicon glyphicon-plus text-primary " aria-hidden="true"></span> 
+                <span v-html="this.lb_14"></span>
+            </a>
         </div>
-        <div class="gobackLink font_small"  v-if="uploadedFiles.length > 0" >
-            <a href="#" v-on:click.stop.prevent="goBack" v-html="this.lb_14"></a>
+        <div v-if="uploadedFiles.length > 0" class="cta">
+            <button class="btn btn-lg btn-success btn-pill btn-cta" v-on:click="verify()" v-html="this.lb_13"></button>
+            <button class="btn btn-lg btn-primary btn-pill btn-cta"  v-on:click="stamp()" v-html="this.lb_12"></button>
         </div>
+        <div class="gobackLink font_small" v-if="uploadedFiles.length > 0" >
+            <a href="#" v-on:click.stop.prevent="goBack" >
+                <span v-html="this.lb_18"></span>
+            </a>
+        </div>
+        
     </div>
 </template>
 
@@ -72,7 +83,9 @@ export default {
            'lb_11',
            'lb_12',
            'lb_13',
-           'lb_14'
+           'lb_14',
+           'lb_17',
+           'lb_18'
           ],
     data: function() {
         return {
@@ -114,8 +127,13 @@ export default {
             this.uploadedFiles.splice(index, 1);
             this.allHashes.splice(index, 1);
         },
+        addFile(){     
+            //this.uploadedFiles = [];            
+            document.getElementById("fileUpload").click()
+        },
         goBack(){     
             this.uploadedFiles = [];            
+            this.allHashes = [];            
             document.getElementById("fileUpload").click()
         },
         verify() {
@@ -194,7 +212,7 @@ export default {
             })
         },
         uploadFiles: function(f) {            
-            var self = this;
+            var self = this;            
             this.loading = true;
             function loadFile(file) {                
                 let name = file.name
@@ -206,12 +224,17 @@ export default {
                     let hash = SHA256.create()
                     hash.update(contents)
                     let hex = hash.hex()
-                    // // replace for time being
-                    self.uploadedFiles.push({ 
-                        fileName: name,
-                        hash: hex
-                    });
-                    self.allHashes.push (hex);
+                    //Checks if already exists
+                    if(self.allHashes.indexOf(hex) === -1){
+                        self.uploadedFiles.push({ 
+                            fileName: name,
+                            hash: hex
+                        });
+                        self.allHashes.push(hex)
+                    } else{
+                        //file already uploaded
+                    }
+                    //self.uploadedFiles = self.getUnique(self.uploadedFiles, 'hash')
                     self.loading = false;
                 };
                 reader.readAsArrayBuffer(file, "UTF-8")
@@ -219,6 +242,19 @@ export default {
             for (var i = 0; i < f[0].length; i++) {
                 loadFile(f[0][i]);
             }
+        },        
+        getUnique(arr, comp) {
+
+            const unique = arr
+                .map(e => e[comp])
+
+                // store the keys of the unique objects
+                .map((e, i, final) => final.indexOf(e) === i && i)
+
+                // eliminate the dead keys & store unique objects
+                .filter(e => arr[e]).map(e => arr[e]);
+
+            return unique;
         }
     },
     mounted() {

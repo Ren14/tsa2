@@ -24,7 +24,7 @@
     right: 0;
 }
 .tsa2 .dropArea ul>li:last-child{
-    border-bottom: none;
+    /* border-bottom: none; */
 }
 .tsa2 .btn-primary:active, .tsa2 .btn-primary:active:hover, .tsa2 .btn-primary:focus, .tsa2 .btn-primary:hover {
     background-color: #fff;
@@ -125,10 +125,14 @@
     display: none !important;
 }
 
-.tsa2 .btn-lg {
+.tsa2 .btn-cta {
     min-width: 150px;
     margin: 0 5px;
-    margin-top: 20px;
+    margin-top: 10px;
+}
+
+.tsa2 .cta{
+    margin-top: 30px;
 }
 .tsa2 .alert   {
     margin-top: 15px;

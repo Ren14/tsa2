@@ -67,6 +67,8 @@
         :lb_12="lb_12"
         :lb_13="lb_13"
         :lb_14="lb_14"
+        :lb_17="lb_17"
+        :lb_18="lb_18"
         v-if="state == 'visible-drop'"
         v-on:stamp="onStamp" 
         v-on:failed-stamp="onFailedStamp()" 
@@ -100,7 +102,9 @@
            'lb_13',
            'lb_14',
            'lb_15',
-           'lb_16'
+           'lb_16',
+           'lb_17',
+           'lb_18'
           ],
    computed: {
     hash () {
