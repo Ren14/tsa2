@@ -11,7 +11,7 @@ class Stamper {
     // utiliza la cuenta walletAccount para enviar la transaccion
     // (o defaultAccount si no se especifica)
     async stamp(objects, walletAccount) {
-        console.log(`stamping ${objects}`)
+        console.log(`asked to stamp ${objects}`)
 
         // si walletAccount es undefined trata de usar la account de web3.eth.defaultAccount
         let defaultAccount = (walletAccount) ? walletAccount.address : this.web3.eth.defaultAccount
@@ -19,13 +19,21 @@ class Stamper {
 
         for (let i=0; i < objects.length; i++) {
             let blockNo = await this.contract.methods.getBlockNo(objects[i], defaultAccount).call()
-            if (blockNo == 0) objectsToStamp.push(objects[i])
+            if (blockNo == 0)
+	    {
+		objectsToStamp.push(objects[i])
+	    }
+	    else
+	    {
+        	console.log(`already stamped: ` + objects[i] );
+	    }
         }
 
         if (objectsToStamp.length == 0) return new Promise( (resolve) => {
             console.log(`Los objects enviados ya están stampeados`)
             resolve()
         })
+        console.log(`stamping ` + objectsToStamp.join(', ') );
 
         let txPromise
         let gasLimit = 2000000
@@ -42,7 +50,8 @@ class Stamper {
                 //chainId: '200941592',
                 gas: gasLimit,
                 // gasLimit: gasLimit,
-                data: encodedABI
+                data: encodedABI,
+		nonce: this.web3.bfa.txnonce++
             }
             // tx.v = Buffer.from([47525974938])
             // tx.nonce = this.web3.utils.toHex(await this.web3.eth.getTransactionCount(defaultAccount))
