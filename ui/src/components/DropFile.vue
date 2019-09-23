@@ -49,7 +49,7 @@
             </div>
             <!-- <li v-for="(file,index) in uploadedFiles" v-bind:key="index">{{file.fileName}}: {{file.hash}}</li> -->
         </div>
-        <div class="add-btn" v-if="uploadedFiles.length > 0" >
+        <div class="add-btn" v-if="uploadedFiles.length > 0 && uploadedFiles.length <= limit-1" >
             <a class="btn btn-default btn-pill"  href="#" v-on:click.stop.prevent="addFile" >
                 <span class="glyphicon glyphicon-plus text-primary " aria-hidden="true"></span> 
                 <span v-html="this.lb_14"></span>
@@ -85,11 +85,14 @@ export default {
            'lb_13',
            'lb_14',
            'lb_17',
-           'lb_18'
+           'lb_18',
+           'lb_19',
+           'lb_20'
           ],
     data: function() {
         return {
-            loading: false,            
+            loading: false,   
+            limit: 10, // CAMBIAR ESTO SI SE PUEDE MAS DE 10 ARCHIVOS         
             uploadedFiles: [],
             verifyCounter: 0,
             allHashes: [],
@@ -108,16 +111,29 @@ export default {
             if (this.uploadedFiles.length <= 0) this.uploadFile();
         },
         handleInput(e) {
-            if(e.target.files.length > 0){
-                var files = e.target.files
-                this.uploadFiles([files])
-            }
+            var files = e.target.files;
+            this.checkLimit(files);
         },
         handleDrop(e) {
             var files = e.dataTransfer.files;
-            //console.log("Drop files:", files);
-            //this.uploadFile(files);
-            this.uploadFiles([files]);
+            this.checkLimit(files);
+        },
+        checkLimit(ufiles){
+            
+            var self = this;
+            var files = ufiles;
+            var lfiles = files.length;
+            //Checkea si se agregran todos a la vez
+            if(lfiles > 0 && lfiles <= self.limit){
+                self.uploadFiles([files]);
+            }else{                
+                self.limitSurpased(self.limit);
+            }
+        },
+        limitSurpased(value){
+            var self = this;
+            // console.log(self.lb_19+self.limit+self.lb_20);
+            self.$emit('limit-surpassed', value)
         },
         removeFile(e) {
             //Lo saca del array pero no del input
@@ -232,21 +248,26 @@ export default {
                 let reader = new FileReader()
         
                 reader.onload = function(e) {
-                    let contents = e.target.result
-                    let hash = SHA256.create()
-                    hash.update(contents)
-                    let hex = hash.hex()
-                    //Checks if already exists
-                    if(self.allHashes.indexOf(hex) === -1){
-                        self.uploadedFiles.push({ 
-                            fileName: name,
-                            hash: hex
-                        });
-                        self.allHashes.push(hex)
-                    } else{
-                        //file already uploaded
+                    if(self.uploadedFiles.length < self.limit){                
+                        let contents = e.target.result
+                        let hash = SHA256.create()
+                        hash.update(contents)
+                        let hex = hash.hex()
+                        //Checks if already exists
+                        if(self.allHashes.indexOf(hex) === -1){
+                            self.uploadedFiles.push({ 
+                                fileName: name,
+                                hash: hex
+                            });
+                            self.allHashes.push(hex)
+                        } else{
+                            //file already uploaded
+                        }
+                        //self.uploadedFiles = self.getUnique(self.uploadedFiles, 'hash')
+                        self.limitSurpased(0);
+                    }else{
+                        self.limitSurpased(self.limit);
                     }
-                    //self.uploadedFiles = self.getUnique(self.uploadedFiles, 'hash')
                     self.loading = false;
                 };
                 reader.readAsArrayBuffer(file, "UTF-8")

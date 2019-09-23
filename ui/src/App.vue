@@ -1,5 +1,8 @@
 <template>
-  <div id="app">       
+  <div id="app">   
+    <div v-if="limite != 0" class="alert alert-danger" role="alert">
+      <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span v-html="this.lb_19"></span> <span v-html="this.limite"></span><span v-html="this.lb_20"></span></p>
+    </div>
     <div>
         <div v-if="state == 'stamped'" class="dropAreasuccess-stamp alert alert-success" role="alert">
           <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="this.lb_00"></span> <b>{{archivo}}</b> <span v-html="this.lb_01"></span></p>
@@ -69,9 +72,12 @@
         :lb_14="lb_14"
         :lb_17="lb_17"
         :lb_18="lb_18"
+        :lb_19="lb_19"
+        :lb_20="lb_20"
         v-if="state == 'visible-drop'"
         v-on:stamp="onStamp" 
         v-on:failed-stamp="onFailedStamp()" 
+        v-on:limit-surpassed="onLimitSurpassed" 
         v-on:verify="onVerify" 
         v-on:verify-completed="onVerifyCompleted" 
         v-on:failed-verify="onFailedVerify()" 
@@ -104,7 +110,9 @@
            'lb_15',
            'lb_16',
            'lb_17',
-           'lb_18'
+           'lb_18',
+           'lb_19',
+           'lb_20'
           ],
    computed: {
     hash () {
@@ -114,6 +122,7 @@
    data: function() {
      return {
        state: 'visible-drop', 
+       limite: 0,
        archivo: '',
        allFiles: [],
        stamps: []
@@ -145,7 +154,10 @@
      },
      onFilename (value) {
       this.archivo = value
-    },    
+    },
+    onLimitSurpassed (value) {
+      this.limite = value
+    },     
     getHashURL(index){
       var url;
       //console.log(index);
