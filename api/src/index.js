@@ -43,6 +43,9 @@ async function setupWeb3() {
             // se trata de utilizar una que haya abierta
             web3.eth.defaultAccount =   (await web3.eth.getAccounts())[0]
         }
+	web3.bfa	            =   {
+		txnonce: await web3.eth.getTransactionCount(web3.eth.defaultAccount),
+	}
 
         /***************************************************/
         // Carga de contrato
@@ -102,6 +105,7 @@ if ( process.env.API_USER && process.env.API_PASS ) {
 // API Endpoints
 /***************************************************/
 app.get('/wait1block', async (req, res) => {
+    console.log( Date() + ": /wait1block" );
     let     ss                      =   new Stamper(web3, contractAbi, contractAddress)
 
     try {
@@ -119,6 +123,7 @@ app.get('/wait1block', async (req, res) => {
     }
 })
 app.post('/stamp', async (req, res) => {
+    console.log( Date() + ": /stamp " + req.body.hashes.join(', ') );
     let     ss                      =   new Stamper(web3, contractAbi, contractAddress)
 
     if ( ! ("hashes" in req.body) )
@@ -158,6 +163,7 @@ app.post('/stamp', async (req, res) => {
 })
 
 app.get('/verify/:hash', async (req, res) => {
+    console.log( Date() + ": /verify/:" + req.params.hash );
     let     ss                      =   new Stamper(web3, contractAbi, contractAddress)
 
     var     value                   =   req.params.hash
