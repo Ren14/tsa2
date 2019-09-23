@@ -198,18 +198,26 @@ export default {
         stamp() {
             var self = this;
 
-            let stampUrl = `${this.apiurl}/stamp`
+            let stampUrl = `${self.apiurl}/stamp`
             self.loading = true
             axios.post(stampUrl, {
                 hashes: self.allHashes
-            }).then(
-                axios.get(`${this.apiurl}/wait1block`).then(
-                    axios.get(`${this.apiurl}/wait1block`).then(() => {
-                        //console.log('Verificar:'+ self.allHashes)
-                        //self.$emit('stamp', self.uploadedFiles[0].hash);
-                        this.verify();
+            }).then(function(response)
+                {
+                    // console.log(response)
+                    axios.get(`${self.apiurl}/wait1block`).then(function(response){
+                        axios.get(`${self.apiurl}/wait1block`).then(() => {
+                            //console.log('Verificar:'+ self.allHashes)
+                            //self.$emit('stamp', self.uploadedFiles[0].hash);
+                            self.verify();
+                        })
+                    }).catch((e) => {
+                        console.error(e)
+                        self.$emit('stamp')
                     })
-                )
+                }
+                
+
             ).catch((e) => {
                 console.error(e)
                 self.$emit('failed-stamp')
