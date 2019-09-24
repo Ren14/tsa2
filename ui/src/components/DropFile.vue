@@ -142,6 +142,7 @@ export default {
             var index = nodes.indexOf( li );
             this.uploadedFiles.splice(index, 1);
             this.allHashes.splice(index, 1);
+            this.limitSurpased(0);
         },
         addFile(){     
             //this.uploadedFiles = [];            
