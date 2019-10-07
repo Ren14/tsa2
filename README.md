@@ -26,6 +26,8 @@ npm install -g truffle
 ## Instalación de desarrollo
 Para desarrollo se utilizó Ganache, una "one click blockchain". Se puede
 descargar desde acá: https://truffleframework.com/ganache
+Utilizar esta herramienta para probar la TSA2 en localhost. Recordar **configurar** Ganache en modo Automine->False y establecer el parámetro **MINING BLOCK TIME (SECONDS)** en 5 segundos (qué es como está configurada la BFA).
+Caso contrario, dará un error el endpoint de la API REST /wait1block
 
 El proyecto está compuesto por tres componentes, los contratos, una api rest
 y una interfaz gráfica.
@@ -41,6 +43,7 @@ contratos hay que correr dentro del directorio ```contract``` el siguiente coman
 ```bash
 truffle migrate
 ```
+Ver la [incidencia #2](https://gitlab.bfa.ar/blockchain/tsa2/issues/2) para solucionar posibles errores al migrar el contrato.
 
 Si se hacen modificaciones sobre el contrato se debe ejecutar lo siguiente:
 ```bash
