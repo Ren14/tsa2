@@ -4,8 +4,21 @@
       <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span v-html="this.lb_19"></span> <span v-html="this.limite"></span><span v-html="this.lb_20"></span></p>
     </div>
     <div>
-        <div v-if="state == 'stamped'" class="dropAreasuccess-stamp alert alert-success" role="alert">
-          <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="this.lb_00"></span> <b>{{archivo}}</b> <span v-html="this.lb_01"></span></p>
+        <div v-if="state=='stamped'">
+          <div v-for="(value, index) in allFiles" :key="index">
+            <div class="success-verify alert alert-success" role="alert">
+              <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="lb_00"></span> <b>{{value.fileName}}</b> <span v-html="lb_01"></span></p>
+              <div class="copiar">
+              <label class="font_small" v-html="lb_16" :for="'id_'+index"></label>
+              <div class="input-group">
+                <input class="form-control input-sm" type="textfield" readonly :value="getHashURL(index)" :id="'id_'+index" >
+                <span class="input-group-btn">
+                  <button class="btn btn-default btn-sm" v-on:click="copiarURL(index)"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button>
+                </span>
+              </div>
+            </div>
+            </div>
+          </div>
         </div>
         <div v-if="state=='failed-stamp'" class="fail-stamp alert alert-danger" role="alert">
           <p><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span v-html="this.lb_02"></span> <b>{{archivo}}</b>
@@ -61,6 +74,7 @@
         </div>
       </div>
       <DropFile
+        ref="dropFile"
         :apiurl="apiurl"
         :lb_07="lb_07"
         :lb_08="lb_08"
@@ -145,8 +159,8 @@
      onFailedVerify() {
        this.state = 'failed-verification'       
      },
-     onStamp(hashStamped) {
-       this.hashStamped = hashStamped;
+     onStamp(allFiles) {
+       this.allFiles = allFiles
        this.state = 'stamped'
      },
      onFailedStamp() {
@@ -154,7 +168,7 @@
      },
      onFilename (value) {
       this.archivo = value
-    },
+    },   
     onLimitSurpassed (value) {
       this.limite = value
     },     

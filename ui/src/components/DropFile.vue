@@ -221,19 +221,21 @@ export default {
                 hashes: self.allHashes
             }).then(function(response)
                 {
+                    self.$emit('stamp', self.uploadedFiles);
                     // console.log(response)
-                    axios.get(`${self.apiurl}/wait1block`).then(function(response){
-                        axios.get(`${self.apiurl}/wait1block`).then(() => {
-                            //console.log('Verificar:'+ self.allHashes)
-                            //self.$emit('stamp', self.uploadedFiles[0].hash);
-                            self.verify();
-                        })
-                    }).catch((e) => {
-                        console.error(e)
-                        self.$emit('stamp')
-                    })
-                }
-                
+                    // axios.get(`${self.apiurl}/wait1block`).then(function(response){
+                    //     axios.get(`${self.apiurl}/wait1block`).then(() => {
+                    //         //console.log('Verificar:'+ self.allHashes)                            
+                    //         self.verify(false);
+                    //     }).catch((e) => {
+                    //         // console.error(e)
+                    //         self.$emit('stamp', self.uploadedFiles);
+                    //     })
+                    // }).catch((e) => {
+                    //     // console.error(e)
+                    //     self.$emit('stamp', self.uploadedFiles);
+                    // })
+                }    
 
             ).catch((e) => {
                 console.error(e)
