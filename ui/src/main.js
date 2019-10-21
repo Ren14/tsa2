@@ -44,6 +44,7 @@ new Vue({
                 lb_18: this.$el.attributes.lb_18.value,            
                 lb_19: this.$el.attributes.lb_19.value,            
                 lb_20: this.$el.attributes.lb_20.value,            
+                lb_21: this.$el.attributes.lb_21.value,
             }
         })
     }

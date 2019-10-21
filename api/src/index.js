@@ -150,15 +150,25 @@ app.post('/stamp', async (req, res) => {
         hashes[i]                   =   hash
     }
 
+    // Ahora retorno un JSON con el resultado de la operación
     try
     {
         let     txHash              =   await ss.stamp(hashes, walletAccount)
-        //let   fullUrl             =   req.protocol + '://' + req.get('host')
-        res.status(200).send('success')
+        //let   fullUrl             =   req.protocol + '://' + req.get('host')        
+        console.log(">>>> Stamp OK <<<<");
+        res.json({
+            status: 'ok',
+            txHash
+        });
     } catch (e) {
+        console.log(">>>> Stamp ERROR <<<<");
         console.error(e)
-        res.status(500)
-        res.send('Error interno. Chequee el log de la aplicación para más detalles')
+        //res.status(500)
+        //res.send('Error interno. Chequee el log de la aplicación para más detalles')
+        res.json({
+            status: 'error',
+            error: e,
+        })
     }
 })
 

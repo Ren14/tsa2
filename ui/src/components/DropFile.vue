@@ -87,7 +87,7 @@ export default {
            'lb_17',
            'lb_18',
            'lb_19',
-           'lb_20'
+           'lb_20',
           ],
     data: function() {
         return {
@@ -221,7 +221,32 @@ export default {
                 hashes: self.allHashes
             }).then(function(response)
                 {
-                    self.$emit('stamp', self.uploadedFiles);
+                    if(response.data.status == 'ok'){
+                        // Itero por los archivos que fueron enviados a sellar                        
+                        for (var i = 0; i < self.uploadedFiles.length; i++) {
+
+                            //Itero por los archivos que me retorno el metodo stamp de la api rest
+                            for (var k = 0; k < response.data.txHash.length; k++) {
+                                
+                                var hash = self.uploadedFiles[i].hash;
+                                if ( ! hash.startsWith('0x') ) {
+                                    hash = '0x' + hash;
+                                }
+                                
+                                //Agrego nueva info para ser mostrada por pantalla, en cas
+                                if(hash == response.data.txHash[k].hash){
+                                    self.uploadedFiles[i].block = response.data.txHash[k].block_number;
+                                    self.uploadedFiles[i].status = response.data.txHash[k].status;                                    
+                                }    
+                            }
+                            
+                        }
+                        
+                        self.$emit('stamp', self.uploadedFiles);
+                    } else {
+                        self.$emit('failed-stamp')
+                    }
+                    
                     // console.log(response)
                     // axios.get(`${self.apiurl}/wait1block`).then(function(response){
                     //     axios.get(`${self.apiurl}/wait1block`).then(() => {
