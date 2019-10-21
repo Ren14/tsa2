@@ -6,7 +6,19 @@
     <div>
         <div v-if="state=='stamped'">
           <div v-for="(value, index) in allFiles" :key="index">
-            <div class="success-verify alert alert-success" role="alert">
+            <div v-if="value.status == 'already_stamped_by_this_TSA'" class="success-verify alert alert-success" role="alert">
+              <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="lb_00"></span> <b>{{value.fileName}}</b><span v-html="lb_21"></span> <span v-html="lb_04"></span> <b>{{ value.block }}</b></p>
+              <div class="copiar">
+              <label class="font_small" v-html="lb_16" :for="'id_'+index"></label>
+              <div class="input-group">
+                <input class="form-control input-sm" type="textfield" readonly :value="getHashURL(index)" :id="'id_'+index" >
+                <span class="input-group-btn">
+                  <button class="btn btn-default btn-sm" v-on:click="copiarURL(index)"><span class="glyphicon glyphicon-copy text-success" aria-hidden="true"></span> <span v-html="lb_15"></span></button>
+                </span>
+              </div>
+            </div>
+            </div>
+            <div v-if="value.status == 'stamped'" class="success-verify alert alert-success" role="alert">
               <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="lb_00"></span> <b>{{value.fileName}}</b> <span v-html="lb_01"></span></p>
               <div class="copiar">
               <label class="font_small" v-html="lb_16" :for="'id_'+index"></label>
@@ -88,6 +100,7 @@
         :lb_18="lb_18"
         :lb_19="lb_19"
         :lb_20="lb_20"
+        :lb_21="lb_21"
         v-if="state == 'visible-drop'"
         v-on:stamp="onStamp" 
         v-on:failed-stamp="onFailedStamp()" 
@@ -126,7 +139,8 @@
            'lb_17',
            'lb_18',
            'lb_19',
-           'lb_20'
+           'lb_20',
+           'lb_21',
           ],
    computed: {
     hash () {
