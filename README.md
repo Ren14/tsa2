@@ -222,4 +222,4 @@ necesarios. Al acceder al index.html sólo se ve el componente de Stampeo. El ht
 Para embeberlo en otro contexto hay que copiar los ```<link />``` y el ```<div id=app>``` y ```<script />``` 
 del body. 
 
-**Es importante notar que la url de la api se configura en el atributo ***apiurl*** del div con id ```app```. Esto tiene que apuntar a la URL donde se eligió ejecutar la API. El archivo a configurar se encuentra en la ruta ui/public/index.html**
+**Es importante notar que la url de la api se configura en el atributo ***apiurl*** del div con id ```app```. Esto tiene que apuntar a la URL donde se eligió ejecutar la API**
