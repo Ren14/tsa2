@@ -83,12 +83,38 @@ Conectado exitosamente:
  > netId: 5777
  > account: 0x80C6C180d044d476437F9F5bCc824dF134A2c9B2
 ```
+Si estas probando en la red de TESTNET, deberás configurar el parámetro ```chainId``` que se encuentra en ```api/src/StamperWrapper.js``` con el valor ```99118822```
 
 La api tiene dos endpoints:
  * **/stamp**: Es un POST, recibe en el body un objeto json con sólo una clave
    llamada ```hashes``` que es un array de strings que representan los hashes a
    stampear.
-   Devuelve 200 si la operación tuve exito, sino devuelve un error code > 400
+   Devuelve un objeto json con la siguiente estructura:
+```json
+  {
+  "status": "ok",
+  "txHash": [
+    {
+      "hash": "0x0bd11b06abfd0d29295bada8aec7dda0c336d23856ac0a21b93d4be60d6388d5",
+      "block_number": "2540433",
+      "status": "already_stamped_by_this_TSA"
+    },
+    {
+      "hash": "0xca7ad1fc3c916e0f8956e997dd5f32072b17b381c9ea753295d387792499fcdc",
+      "block_number": "2540508",
+      "status": "already_stamped_by_this_TSA"
+    },
+    {
+      "hash": "0x589e0b25fe9e05ff319af24b9dd356a9228be8b1a46fe4bd4cca3567688c617b",
+      "block_number": "2540508",
+      "status": "stamped"
+    }
+  ]
+}
+  ```
+   ```status``` es ok si el resultado fue correcto. En ```txHash``` viene la
+  lista de hashes stampados (con sus metadatos). El campo ```status``` propio de cada elemento, se refiere
+  a que si el hash ya se encontraba previamente stampado ```already_stamped_by_this_TSA```, si fue stampado correctamente en el envío ```stamped```, o si tuvo algún error durante su proceso ```error```.
   
  * **/verify/:hash**: Es un GET, se le pasa en vez de :hash el hash a verificar.
    Devuelve un objecto json con la siguiente estructura:
@@ -196,4 +222,4 @@ necesarios. Al acceder al index.html sólo se ve el componente de Stampeo. El ht
 Para embeberlo en otro contexto hay que copiar los ```<link />``` y el ```<div id=app>``` y ```<script />``` 
 del body. 
 
-**Es importante notar que la url de la api se configura en el atributo ***apiurl*** del div con id ```app```. Esto tiene que apuntar a la URL donde se eligió ejecutar la API.**
+**Es importante notar que la url de la api se configura en el atributo ***apiurl*** del div con id ```app```. Esto tiene que apuntar a la URL donde se eligió ejecutar la API. El archivo a configurar se encuentra en la ruta ui/public/index.html**
