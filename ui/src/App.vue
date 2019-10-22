@@ -20,6 +20,7 @@
             </div>
             <div v-if="value.status == 'stamped'" class="success-verify alert alert-success" role="alert">
               <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="lb_00"></span> <b>{{value.fileName}}</b> <span v-html="lb_01"></span></p>
+              <p>Hash de la TX: <b>{{value.tx_hash}}</b></p>
               <div class="copiar">
               <label class="font_small" v-html="lb_16" :for="'id_'+index"></label>
               <div class="input-group">

@@ -236,12 +236,17 @@ export default {
                                 //Agrego nueva info para ser mostrada por pantalla, en cas
                                 if(hash == response.data.txHash[k].hash){
                                     self.uploadedFiles[i].block = response.data.txHash[k].block_number;
-                                    self.uploadedFiles[i].status = response.data.txHash[k].status;                                    
+                                    self.uploadedFiles[i].status = response.data.txHash[k].status;
+                                    
+                                    if(response.data.txHash[k].status == 'stamped'){
+                                        self.uploadedFiles[i].tx_hash =  response.data.txHash[k].tx_hash;
+                                    }
                                 }    
                             }
                             
                         }
                         
+                        console.log(self.uploadedFiles);
                         self.$emit('stamp', self.uploadedFiles);
                     } else {
                         self.$emit('failed-stamp')
