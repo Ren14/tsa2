@@ -20,7 +20,7 @@
             </div>
             <div v-if="value.status == 'stamped'" class="success-verify alert alert-success" role="alert">
               <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <span v-html="lb_00"></span> <b>{{value.fileName}}</b> <span v-html="lb_01"></span></p>
-              <p>Hash de la TX: <b>{{value.tx_hash}}</b></p>
+              <p><span v-html="lb_22"> <b>{{value.tx_hash}}</b></p>
               <div class="copiar">
               <label class="font_small" v-html="lb_16" :for="'id_'+index"></label>
               <div class="input-group">
@@ -102,6 +102,7 @@
         :lb_19="lb_19"
         :lb_20="lb_20"
         :lb_21="lb_21"
+        :lb_22="lb_22"
         v-if="state == 'visible-drop'"
         v-on:stamp="onStamp" 
         v-on:failed-stamp="onFailedStamp()" 
@@ -142,6 +143,7 @@
            'lb_19',
            'lb_20',
            'lb_21',
+           'lb_22',
           ],
    computed: {
     hash () {
