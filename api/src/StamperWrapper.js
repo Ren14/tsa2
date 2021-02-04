@@ -44,6 +44,7 @@ class Stamper {
             let gasLimit = 2000000
 
             if (walletAccount) {
+		console.log("Entra por if");
                 let methodPut = this.contract.methods.put(objectsToStamp)
                 let encodedABI = methodPut.encodeABI()
 
@@ -52,7 +53,7 @@ class Stamper {
                     // v: 47525974938 * 35 + 2,
                     // v: 47525974938,
                     // Parece que sin chainId funciona igual - hasta a veces mejor. Pero en la red Testnet, hay que agregar el chainID 99118822
-                    chainId: '99118822',
+                    //chainId: '99118822',
                     gas: gasLimit,
                     // gasLimit: gasLimit,
                     data: encodedABI,
@@ -60,12 +61,13 @@ class Stamper {
                 }
                 // tx.v = Buffer.from([47525974938])
                 // tx.nonce = this.web3.utils.toHex(await this.web3.eth.getTransactionCount(defaultAccount))
-
+		console.log("Firmo TX");
                 let signedTx = await walletAccount.signTransaction(tx)
                 // console.log(signedTx)
                 // txPromise = this.web3.eth.sendSignedTransaction(signedTx)
                 // txPromise = this.web3.eth.sendSignedTransaction('0x' + signedTx.serialize().toString('hex'))
-                txPromise = await this.web3.eth.sendSignedTransaction(signedTx.rawTransaction) // Apliqué el await para que espere a que finalice la operación
+		console.log("Envio TX firmada");
+                txPromise = this.web3.eth.sendSignedTransaction(signedTx.rawTransaction) // Apliqué el await para que espere a que finalice la operación
                 
                 let tx_result = []; // Objeto que contiene la info de la TX
 
@@ -96,6 +98,7 @@ class Stamper {
                         objectsStamped.push(new_object)
                     }
             } else {
+		console.log("Entra por el bloque elseIf");
                 txPromise = await this.contract.methods.put(objectsToStamp).send({
                     from: defaultAccount,
                     gasLimit: gasLimit
@@ -105,7 +108,7 @@ class Stamper {
             // Retorno un array con todos los objetos stampados
             return objectsStamped;
         } catch (e) {
-            console.error(e)
+            console.error(e.message)
             throw e
         }
 

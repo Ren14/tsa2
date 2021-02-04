@@ -162,12 +162,12 @@ app.post('/stamp', async (req, res) => {
         });
     } catch (e) {
         console.log(">>>> Stamp ERROR <<<<");
-        console.error(e)
+        console.error(e.message)
         //res.status(500)
         //res.send('Error interno. Chequee el log de la aplicación para más detalles')
         res.json({
             status: 'error',
-            error: e,
+            error: e.message,
         })
     }
 })
